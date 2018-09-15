@@ -1,0 +1,82 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+.panel h1{ color:#444444; font-size:32px; margin:0 0 8px 0;font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif}
+.calculator-form .form-control {
+  background: #dee2e4;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  font-size: 14px;
+  height: 50px;
+  width: 50px;
+  line-height: 50px;
+  margin-right: 5%;;
+}
+
+.calculator-form .display-control {
+  background: #f7f7f7 none repeat scroll 0 0;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 50px;
+  width: 230px;
+  line-height: 50px;
+  margin-right: 30px;;
+}
+.calculator-form .result-control {
+  background: #f7f7f7 none repeat scroll 0 0;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 50px;
+  width: 70px;
+  line-height: 50px;
+  margin-right: 5%;;
+}
+
+.main-div {
+  background: #ffffff none repeat scroll 0 0;
+  border-radius: 2px;
+  margin: 10px auto 30px;
+  max-width: 38%;
+  padding: 30px 30px 70px 30px;
+  border: 2px ridge  rgb(6, 51, 88);
+}
+.calculator-form .form-group {
+  margin-bottom:10px;
+}
+.calculator-form{ text-align:center;}
+.calculator-form  .btn.btn-primary {
+  background: #2da4d3 none repeat scroll 0 0;
+  border-color: #f0ad4e;
+  color: #ffffff;
+  font-size: 20px;
+  width: 70%;
+  height: 50px;
+  line-height: 50px;
+  padding: 0;
+}
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
