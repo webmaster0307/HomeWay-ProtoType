@@ -1,23 +1,202 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,Redirect } from 'react-router-dom';
 import '../../src/CSS/profile.css';
 import Logo from '../../src/avatar_2x.png';
-
+import Logo1 from '../../src/logo-bceheader.svg';
+import expedia from '../../src/birdhouse-bceheader.svg';
+import axios from 'axios';
+import cookie from 'react-cookies';
 
 
 
 
 class Profile extends Component {
+  constructor(){
+    super();
+    this.state={
+      firstname:"",
+      lastname:"",
+      aboutme:null,
+      citycountry:null,
+      company:null,
+      school:null,
+      hometown:null,
+      languagues:null,
+      gender:null,
+      photo:null,
+      display:null,
+      status:null
+
+    }
+
+this.setfname=this.setfname.bind(this);
+this.setlname=this.setlname.bind(this);
+this.setabout=this.setabout.bind(this);
+this.setcity=this.setcity.bind(this);
+this.setcompany=this.setcompany.bind(this);
+this.setschool=this.setschool.bind(this);
+this.sethometown=this.sethometown.bind(this);
+this.setlanguages=this.setlanguages.bind(this);
+this.setgender=this.setgender.bind(this);
+this.saveprofile=this.saveprofile.bind(this);
+this.addphoto=this.addphoto.bind(this);
+//this.submitphoto=this.submitphoto.bind(this);
+
+
+}
+
+
+addphoto(event){
+  if (event.target.files && event.target.files[0]) {
+    let reader = new FileReader();
+    reader.onload = (e) => {
+        this.setState({display: e.target.result});
+
+    };
+    this.setState({
+      photo:event.target.files[0]
+    })
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+
+}
+
+
+setfname(e){
+  this.setState({
+    firstname:e.target.value
+  })
+}
+
+
+setlname(e){
+  this.setState({
+    lastname:e.target.value
+  })
+}
+setabout(e){
+  this.setState({
+    aboutme:e.target.value
+  })
+}
+setcity(e){
+  this.setState({
+    citycountry:e.target.value
+  })
+}
+setcompany(e){
+  this.setState({
+    company:e.target.value
+  })
+}
+setschool(e){
+this.setState({
+    school:e.target.value
+  })
+}
+sethometown(e){
+  this.setState({
+    hometown:e.target.value
+  })
+}
+setlanguages(e){
+  this.setState({
+    languages:e.target.value
+  })
+}
+setgender(e){
+  this.setState({
+    gender:e.target.value
+  })
+}
+
+saveprofile(e){
+  e.preventDefault();
+  
+  let formdata=new FormData();
+  formdata.append("firstname",this.state.firstname);
+  formdata.append("lastname",this.state.lastname);
+  formdata.append("aboutme",this.state.aboutme);
+  formdata.append("citycountry",this.state.citycountry);
+  formdata.append("company",this.state.company);
+  formdata.append("school",this.state.school);
+  formdata.append("hometown",this.state.hometown);
+  formdata.append("languages",this.state.languages);
+  formdata.append("gender",this.state.gender);
+  
+
+
+  if(cookie.load('traveler')){
+    formdata.append("username",cookie.load('traveler'));
+
+  formdata.append("photo",this.state.photo);
+  
+  axios.post('http://localhost:3001/addprofile',formdata)
+  .then(res=>{
+    if(res.status===200){
+this.setState({
+  status:res.status
+})
+    }
+  })
+
+  }else{
+    <Redirect to='/'></Redirect>
+  }
+  
+
+}
+componentWillMount(){
+  if(cookie.load('traveler')){
+    var data={
+      emailaddress:cookie.load('traveler')
+    }
+    axios.post('http://localhost:3001/gettravelerprofile',data)
+    .then(res=>{
+      let imagePreview = 'data:image/jpg;base64, ' + res.data.photo;
+      
+      if(res.status===200){
+      this.setState({
+        firstname:res.data.firstname,
+        lastname:res.data.lastname,
+      aboutme:res.data.aboutme,
+      citycountry:res.data.citycountry,
+      company:res.data.company,
+      school:res.data.school,
+      hometown:res.data.hometown,
+      languages:res.data.languages,
+      gender:res.data.gender,
+      display:imagePreview
+
+      });
+    }
+    
+    });
+  }
+}
     render() {
         return (
             <div>
+            <div>
+            <nav className="navbar navbar-default">
+                    <div className="container-fluid">
+                        <div className="navbar-header">
+                            <a className="navbar-brand" href="/"><img className="brand" src={Logo1} /></a>
+                        </div>
+                        <ul className="nav navbar-right">
+                            <li><img src={expedia} /></li>
+                        </ul>
+                    </div>
+                </nav>
+            
+            </div>
 
-            <div id="top"className="panel panel-default"></div>
+
+            <div id="top" className="panel panel-default"></div>
                 <div id="verifications" className="panel-heading">
                 <div className="text-center">
-        <img id="img1"src={Logo} className="avatar img-circle img-thumbnail" alt="avatar"/>
-        <h6>Upload a new photo</h6>
-        <input type="file" className="text-center center-block file-upload"/>
+        
       </div>
      <br/>
                 </div>
@@ -43,17 +222,20 @@ class Profile extends Component {
                             </div>
                             <div className="row">
                                 <div className="col-md-12">
-                                    <form>
+                                    <form onSubmit={this.saveprofile} encType="multipart/form-data">
+                                    <img id="target" src={this.state.display} className="avatar img-circle img-thumbnail" alt="avatar"/>
+        <h6>Upload a new photo</h6>
+        <input type="file" className="text-center center-block file-upload" onChange={this.addphoto} className="filetype"/>
                                       <div className="form-group row">
                                         
                                         <div className="col-8">
-                                          <input id="fname" name="fname" placeholder="First name" className="form-control here" required="required" type="text"/>
+                                          <input id="fname" name="fname" placeholder="First name" className="form-control here"  type="text" onChange={this.setfname} value={this.state.firstname} required/>
                                         </div>
                                       </div>
 
                                       <div className="form-group row">
                                      <div className="col-8">
-                                          <input id="lname" name="lname" placeholder="Last name or initial" className="form-control here" type="text"/>
+                                          <input id="lname" name="lname" placeholder="Last name or initial" className="form-control here" type="text" onChange={this.setlname} value={this.state.lastname} required/>
                                         </div>
                                       </div>
 
@@ -62,45 +244,45 @@ class Profile extends Component {
                                         <div className="form-group row">
                                          
                                         <div className="col-12">
-                                          <textarea id="publicinfo" name="publicinfo" cols="40" rows="4" className="form-control" placeholder="About me"></textarea>
+                                          <textarea id="publicinfo" name="publicinfo" cols="40" rows="4" className="form-control" placeholder="About me" onChange={this.setabout} value={this.state.aboutme}></textarea>
                                         </div>
 
                                       </div>
 
                                       <div className="form-group row">
                                         <div className="col-8">
-                                          <input id="text" name="city" placeholder="My city,country" className="form-control here"  type="text"/>
+                                          <input id="text" name="city" placeholder="My city,country" className="form-control here"  type="text" onChange={this.setcity} value={this.state.citycountry}/>
                                         </div>
                                       </div>
 
                                       <div className="form-group row">
                                      <div className="col-8">
-                                          <input id="company" name="company" placeholder="Company" className="form-control here" type="text"/>
+                                          <input id="company" name="company" placeholder="Company" className="form-control here" type="text" onChange={this.setcompany} value={this.state.company}/>
                                         </div>
                                       </div>
                                       
                                       <div className="form-group row">
                                      <div className="col-8">
-                                          <input id="school" name="school" placeholder="School" className="form-control here" type="text"/>
+                                          <input id="school" name="school" placeholder="School" className="form-control here" type="text" onChange={this.setschool} value={this.state.school}/>
                                         </div>
                                       </div>
 
                                       <div className="form-group row">
                                      <div className="col-8">
-                                          <input id="Hometown" name="hometown" placeholder="Hometown" className="form-control here" type="text"/>
+                                          <input id="Hometown" name="hometown" placeholder="Hometown" className="form-control here" type="text" onChange={this.sethometown} value={this.state.hometown}/>
                                         </div>
                                       </div>
 
                                       <div className="form-group row">
                                      <div className="col-8">
-                                          <input id="Languages" name="languages" placeholder="Languages" className="form-control here" type="text"/>
+                                          <input id="Languages" name="languages" placeholder="Languages" className="form-control here" type="text" onChange={this.setlanguages} value={this.state.languages}/>
                                         </div>
                                       </div>
 
                                       <div className="form-group row">
                                         
                                         <div className="col-8">
-                                          <select id="gender" name="gender" className="custom-select" placeholder="Gender">
+                                          <select id="gender" name="gender" className="custom-select" placeholder="Gender" onChange={this.setgender} defaultValue="Male" value={this.state.gender}>
                                             <option value="male">Male</option>
                                             <option value="male">Female</option>
                                             <option value="male">Other</option>
@@ -155,7 +337,6 @@ class Profile extends Component {
                     </div>
                     </div>
           
-            
             
         </div>
             </div>

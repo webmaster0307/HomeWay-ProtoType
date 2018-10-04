@@ -1,0 +1,132 @@
+#carousel-container{
+    background-color: rgba(229, 237, 243, 0.842);
+    width: 70%;
+    height: 50%;
+    padding-top: 5%;
+   
+}
+#image-cont{
+    width: 85%;
+    height:70%;
+    padding-bottom: 3%;
+    padding-left: 15%;
+
+    
+}
+.rental-price__label {
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+}
+.text-muted {
+    color: #5e6d77;
+}
+
+#amount-dis{
+    font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    color: #323f4d;
+    font-size:32px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 40px;
+    margin-right: 8px;
+}
+
+#detail-heading{
+    padding-left: 5%;
+}
+div.sticky{
+   
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        background-color:white;
+        padding-left: 0px;
+        font-size: 20px;
+    
+}
+
+#bed-logo{
+    padding-left: 10%;
+    padding-top:0;
+
+}
+#bed-logo2{
+    padding-left: 1%;
+    padding-top:0;
+
+}
+
+#bed-logo-ext{
+    padding-left: 10%;
+    padding-top:0;
+
+}
+#bed-text{
+    padding-left: 6%;
+    padding-top:0;
+
+}
+#bed-sleeps{
+    padding-left: 8%;
+    padding-top:0;
+
+}
+#bed-sleeps-ext{
+    padding-left: 12%;
+    padding-top:0;
+
+}
+#bed-sleeps-ext1{
+    padding-left: 14%;
+    padding-top:0;
+
+}
+#long-desc{
+    font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-size: 12px;
+    padding-top: 0;
+    padding-left: 0px;
+
+}
+#long-desc1{
+    font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-size: 14px;
+    padding-top: 0;
+    padding-left: 0px;
+
+}
+
+#long-desc11{
+    color:#5e6d77;
+    font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-size: 20px;
+    padding-left: 1%;
+}
+
+#about-desc{
+    color:#5e6d77;
+    font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-size: 16px;
+    padding-left: 1%;
+   
+ 
+}
+#booking{
+    padding-left:40%;
+ 
+   
+}
+
+#search-crit{
+    margin-bottom: 8px;
+background-color: #fff;
+border: 1px solid #d3d8de;
+border-radius: 4px;
+}
+#loginmsg{
+    font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-size: 16px;
+    padding-left: 20%;
+}
+

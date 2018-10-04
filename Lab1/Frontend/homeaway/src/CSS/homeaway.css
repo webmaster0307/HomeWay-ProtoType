@@ -15,7 +15,7 @@ h1,.h1{font-size:40px;font-weight:300;font-family:"Roboto",Arial,sans-serif;colo
 #login-container{position:relative;z-index:100}
 
 .NeedAccnt{padding-top: 10px;font-size: 18px}
-.loginHeader{font-size:40px;font-weight:300;font-family:"Roboto",Arial,sans-serif;color:#353e44;line-height: 1.25}
+.loginHeader{font-size:40px;font-weight:300;font-family:"Roboto",Arial,sans-serif;color:#353e44;line-height: 1.25;padding-left:70px}
 
 .form-heading { color:#fff; font-size:23px;}
 .panel{text-align: left}
@@ -64,6 +64,7 @@ h1,.h1{font-size:40px;font-weight:300;font-family:"Roboto",Arial,sans-serif;colo
   color: #ffffff;
   font-size: 14px;
   margin: auto;
+  
 }
 .login-form .btn.btn-primary.reset {
   background:rgb(255, 138,0) none repeat scroll 0 0;

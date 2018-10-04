@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Link ,NavLink,Redirect} from 'react-router-dom';
+import { Link,Redirect } from 'react-router-dom';
 import Logo from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
+import displayimg from '../../src/ownerlogin.png';
 import '../../src/CSS/homeaway.css';
-import axios from 'axios';
+import '../../src/CSS/ownerlogin.css';
 import '../../src/CSS/bootstrap-social.css';
+import axios from 'axios';
 
 
-class Login extends Component {
+class OwnerLogin extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -21,52 +23,56 @@ class Login extends Component {
         this.setpassword=this.setpassword.bind(this);
         this.checklogin=this.checklogin.bind(this);
     }
-setemail(e){
-this.setState({
-    emailaddress:e.target.value
-
-})
-}
-
-setpassword(e){
-    this.setState({
-        password:e.target.value
-    })
-}
-    checklogin(e){
-        e.preventDefault();
-        let data={
-            emailaddress:this.state.emailaddress,
-            password:this.state.password
-
-        }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        axios.post('http://localhost:3001/travelerlogin',data)
-        .then(res=>{
-            if(res.status===200){
-                this.setState({
-                    status:200
-                    
-                })
-                
-            }
-            
-        }).catch(res=>{
-            this.setState({
-                message:"Incorrect username or password"
-            })
+    setemail(e){
+        this.setState({
+            emailaddress:e.target.value
+        
         })
-    }
+        }
+        
+        setpassword(e){
+            this.setState({
+                password:e.target.value
+            })
+        }
+
+
+        checklogin(e){
+            e.preventDefault();
+            let data={
+                emailaddress:this.state.emailaddress,
+                password:this.state.password
+    
+            }
+            //set the with credentials to true
+            axios.defaults.withCredentials = true;
+            axios.post('http://localhost:3001/ownerLogin',data)
+            .then(res=>{
+                if(res.status===200){
+                    this.setState({
+                        status:200
+                        
+                    })
+                    
+                }
+                
+            }).catch(res=>{
+                this.setState({
+                    message:"Incorrect username or password"
+                })
+            })
+        }
+     
+
     render() {
         var redirect=this.state.status===200?<Redirect to='/'/>:null;
         return (
-            <div >
+            <div>
             {redirect}
                 <nav className="navbar navbar-default">
                     <div className="container-fluid">
                         <div className="navbar-header">
-                            <a className="navbar-brand" href="/"><img className="brand" src={Logo} /></a>
+                            <a className="navbar-brand" href="#"><img className="brand" src={Logo} /></a>
                         </div>
                         <ul className="nav navbar-right">
                             <li><img src={expedia} /></li>
@@ -77,32 +83,26 @@ setpassword(e){
                 <br />
                 <br />
                
-                <div>
-                    <h1 className="loginHeader">Log in to HomeAway</h1>
-
-                    <div className="NeedAccnt">
-                        <span>
-                            Need an account? 
-            </span>
-                        <NavLink to="/signup">
-                            Sign Up
-                </NavLink>
-                    </div>
-                </div>
-               
+                
                 <div className="container">
-
+                
+<table>
+<tr>
+<td id="displayim"><span><img  src={displayimg}></img></span>
+</td>
+<td>
 <div className="login-form">
 <div className="main-div">
     <div className="panel">
-   <label>Account Login</label>
+   <label>Owner Login</label><br/><hr/>
+   
    </div>
     <form id="Login" onSubmit={this.checklogin}>
 
         <div className="form-group">
 
 
-            <input type="email" className="form-control" id="inputEmail" placeholder="Email address" onChange={this.setemail} required/>
+            <input type="email" class="form-control" id="inputEmail" placeholder="Email address" onChange={this.setemail} required/>
 
         </div>
 
@@ -117,19 +117,17 @@ setpassword(e){
         <button type="submit" className="btn btn-primary">Log In</button>
         <br/>
         <br/>
-        <a className="btn btn-block btn-social btn-facebook">
-        <span className="fa fa-facebook"></span> Log in with Facebook
-      </a>
+        <hr/>
         <br/>
         <label style={{color:"red"}}>{this.state.message}</label>
         <br/>
-        <div className="disclaimer">
-        <label>We don't post anything without your permission</label>
-</div>
+        
     </form>
     </div>
 
-</div></div>
+</div></td></tr>
+
+</table></div>
 
 
 
@@ -140,4 +138,4 @@ setpassword(e){
             }
         }
         
-        export default Login;
+        export default OwnerLogin;

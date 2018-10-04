@@ -65,7 +65,12 @@ color: blue;
 .btn-facebook{
   color: #eee;
 }
-#img1 {
+#target {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  width:100px
+  margin: 20px;
+
+  object-fit: cover;
+  object-position: center right;
 }
