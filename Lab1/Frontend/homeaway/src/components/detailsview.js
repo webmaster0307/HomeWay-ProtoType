@@ -52,6 +52,12 @@ bookthisproperty(e){
         })
         return;
     }
+    if(this.state.start > this.state.end){
+        this.setState({
+            bookingstatus:"Start date should be before end date"
+        })
+        return;
+    }
     this.setState({
         loginstatus:"loggedin"
     })
@@ -64,13 +70,19 @@ bookthisproperty(e){
 console.log("in booking");
     axios.post('http://localhost:3001/bookproperty',data)
     .then(res=>{
+        
         if(res.status==200){
             this.setState({
                 bookingstatus:"This property has been successfully booked."
             })
-        }else{
+        }else if(res.status==201){
             this.setState({
-                bookingstatus:"This property is already booked for your search criteria."
+                bookingstatus:"This property is already booked for your search criteria"
+            })
+        }
+        else{
+            this.setState({
+                bookingstatus:"This property is unavailable during selected dates"
             })
         }
     })
@@ -120,10 +132,11 @@ componentWillMount(){
 }
 
   render() {
+      
       console.log("s",this.state.property_detail);
       //var {address}=this.state.property_detail;
       var loginmessage=null;
-      loginmessage=this.state.loginstatus==null?"Please login to continue with your booking":null;
+      loginmessage=this.state.loginstatus==null?"Traveler please login to continue with booking":null;
       let details=<div></div>;
      var imgs=this.state.images;
       //var im=this.state.property_detail.images;
@@ -251,6 +264,7 @@ componentWillMount(){
     <p id="about-desc">{this.state.property_detail.publicinfo}</p>
 
 
+   
     </div>
     <br/><br/><br/><br/>
     </div>
@@ -263,11 +277,15 @@ componentWillMount(){
                 <div className="panel panel-default">
                 <div id="verifications" className="panel-heading"><label id="amount-dis">{this.state.property_detail.currency} {this.state.property_detail.rate} <span className="rental-price__label text-muted" data-wdio="rental-price-label">per night</span></label></div>
                 <div className="panel-body"><br/>
+                <form action="" onSubmit={this.bookthisproperty}>
                 <div className="container" id="search-crit">
+               
   <div className="row">
+  
     <div className="col-sm-6">
 <br/>   
       Check in <br/><br/>
+
       
       <input type="date"  name="start" defaultValue={this.props.match.params.start} style={{"width":"170px"}} onChange={this.setStart}/>
     
@@ -293,8 +311,11 @@ componentWillMount(){
                 <br/>
                 <hr/>
                 <div id="booking">
-                <button  type="button" className="btn btn-primary" style={{width:"50%"}} onClick={this.bookthisproperty}>Book Now</button>
+                <button  type="submit" className="btn btn-primary" style={{width:"50%"}}>Book Now</button>
+               
                 </div>
+                </form>
+               
         <label id="loginmsg">{loginmessage}</label>
         <label id="loginmsg">{this.state.bookingstatus}</label>
                 </div>

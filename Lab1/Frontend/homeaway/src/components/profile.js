@@ -142,7 +142,19 @@ this.setState({
   })
 
   }else{
-    <Redirect to='/'></Redirect>
+    formdata.append("username",cookie.load('owner'));
+
+  formdata.append("photo",this.state.photo);
+  
+  axios.post('http://localhost:3001/addprofileowner',formdata)
+  .then(res=>{
+    if(res.status===200){
+this.setState({
+  status:res.status
+})
+    }
+  })
+
   }
   
 
@@ -174,6 +186,36 @@ componentWillMount(){
     
     });
   }
+
+  if(cookie.load('owner')){
+    
+    axios.get('http://localhost:3001/getownerprofile',{ params: {
+      username:cookie.load('owner')
+      
+    }})
+    .then(res=>{
+      let imagePreview = 'data:image/jpg;base64, ' + res.data.photo;
+      
+      if(res.status===200){
+      this.setState({
+        firstname:res.data.firstname,
+        lastname:res.data.lastname,
+      aboutme:res.data.aboutme,
+      citycountry:res.data.citycountry,
+      company:res.data.company,
+      school:res.data.school,
+      hometown:res.data.hometown,
+      languages:res.data.languages,
+      gender:res.data.gender,
+      display:imagePreview
+
+      });
+    }
+    
+    });
+  }
+
+
 }
     render() {
         return (

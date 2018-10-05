@@ -11,6 +11,8 @@ import cookie from 'react-cookies';
 class Dashboard extends Component {
     render() {
         let navTop=null;
+
+        
         
         if(cookie.load('traveler')){
             console.log("Able to read cookie");
@@ -18,7 +20,7 @@ class Dashboard extends Component {
             navTop = (
                 <ul className="nav nav-tabs">
                 <li  id="it1" className="nav-item">
-                <Link className="nav-link active" to="/">My Trips</Link>
+                <Link className="nav-link active" to="/mytrips" >My Trips</Link>
             </li>
             <li id="it2" className="nav-item">
                 <Link className="nav-link" to="/profile">Profile</Link>
@@ -30,6 +32,23 @@ class Dashboard extends Component {
             );
         }
         
+        if(cookie.load('owner')){
+            console.log("Able to read cookie");
+            
+            navTop = (
+                <ul className="nav nav-tabs">
+                <li id="it2" className="nav-item">
+                <Link className="nav-link" to="/ownerdashboard">Owner Dashboard</Link>
+            </li>  
+            <li id="it2" className="nav-item">
+                <Link className="nav-link" to="/profile">Profile</Link>
+            </li>
+            <li id="it2" className="nav-item">
+                <a className="nav-link" href="#">Account</a>
+            </li>
+            </ul>
+            );
+        }
 
         return (
             <div>

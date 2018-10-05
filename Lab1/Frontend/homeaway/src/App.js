@@ -13,6 +13,9 @@ import {BrowserRouter,Switch,Route} from 'react-router-dom';
 import OwnerLogin from './components/ownerlogin';
 import Home from './components/home';
 import DetailsView from './components/detailsview';
+import Trips from './components/trips';
+import OwnerDashboard from './components/ownerdashboard';
+import ShowTravelers from './components/showtravelers';
 
 class App extends Component {
 constructor(){
@@ -33,13 +36,17 @@ constructor(){
           <Route path='/dashboard' component={Dashboard} />
           <Route path='/profile' component={Profile}/>
           <Route path='/profile' component={Profile}/>
+          <Route path='/mytrips' component={Trips}/>
+          <Route path='/ownerdashboard' component={OwnerDashboard}/>
+
           <Route path='/details' component={ImgMediaCard}/>
           <Route path="/search/:loc/:start/:end/:count" component={ImgMediaCard}/>
           <Route path="/detailsview/:propid/:start/:end/:guests" component={DetailsView}/>
+          <Route path="/fetchtravelers/:imageName/:property_id/:headline/:property_type/:bathrooms/:bedrooms/:accomodates/:rate" component={ShowTravelers}/>
 
           <Route to="/postproperty" component={PostProperty}/>
 
-          
+
           
           </Switch>
         </BrowserRouter>
