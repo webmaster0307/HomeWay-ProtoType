@@ -7,7 +7,8 @@ class App extends Component {
     super();
     this.state={
       expression:"",
-      
+      errMessage:null,
+
       result:null
     }
     this.handleChange=this.handleChange.bind(this);
@@ -20,13 +21,17 @@ class App extends Component {
   }
   handleChange(e){
     this.setState({
-      expression:e.target.value
+      expression:e.target.value,
     })
   }
-  componentDidMount(){
-
-  }
+  
   calculateResult=()=>{
+    if(this.state.expression==""){
+      this.setState({
+        errMessage:"Enter the expression to be evaluated"
+      })
+      return;
+    }
     var data={
      expression:this.state.expression
     }
@@ -34,14 +39,18 @@ class App extends Component {
     axios.post("http://localhost:3001/calculate",data)
     .then(res=>{
       
-      console.log("Response Status : "+res.status);
       this.setState({
-        result:res.data
+        result:res.data,
+        errMessage:null
       })
       
     }
 
-    );
+    ).catch(error=>{
+      this.setState({
+        errMessage:"Expression to be evaluated is invalid"
+      })
+    });
   }
 
   
@@ -79,7 +88,8 @@ class App extends Component {
                   </span>
                   <br/>
                   <br/>
-                  <button onClick = {this.calculateResult} className="btn btn-primary">Submit</button>                 
+                  <button onClick = {this.calculateResult} className="btn btn-primary">Submit</button> <br/><br/>
+                  <span style={{color:"red"}}>{this.state.errMessage}</span>             
           </div>
       </div>
   
