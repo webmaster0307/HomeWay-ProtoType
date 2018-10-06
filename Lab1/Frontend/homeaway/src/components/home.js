@@ -13,10 +13,10 @@ constructor(props){
     super(props);
 
     this.state={
-        location:null,
-        start:null,
-        end:null,
-        guests:null
+        location:"San Francisco",
+        start:'2018-09-03',
+        end:"2018-09-26",
+        guests:2
     };
     this.handlelogout=this.handlelogout.bind(this);
     this.setlocation=this.setlocation.bind(this);
@@ -61,6 +61,14 @@ setguests(e){
 }
 
     render() {
+        let list_prop=null;
+        if(cookie.load('owner')){
+            list_prop=(
+                <li className="nav-item"><button id="listprop" type="button" className="btn btn-light"><NavLink to="/postproperty">List your property</NavLink></button></li>
+
+
+            );
+        }
     
      let navLogin = null;
         if(cookie.load('traveler')){
@@ -82,6 +90,7 @@ setguests(e){
             console.log("Able to read cookie owner");
             console.log();
             navLogin = (
+               
                 <li className="nav-item dropdown">
         <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
        Hello {cookie.load('owner')}
@@ -91,6 +100,10 @@ setguests(e){
          <Link className="dropdown-item" to='/' onClick={this.handlelogout}>Logout</Link>
           
         </div>
+      
+
+                               
+        
         </li>
             );
         }
@@ -120,14 +133,13 @@ setguests(e){
         </li>
         {navLogin}
      
-      <li className="nav-item">
-                        <a className="nav-link" href="">Help</a>
-                      </li>
-      <li className="nav-item"><button id="listprop" type="button" className="btn btn-light"><NavLink to="/postproperty">List your property</NavLink></button></li>
-                            
-                         <li className="nav-item">&nbsp;</li>   
-                         <li className="nav-item">&nbsp;</li> <li className="nav-item">&nbsp;</li><li className="nav-item">&nbsp;</li>
-                            
+        <li className="nav-item">
+        <a className="nav-link" href="">Help</a>
+      </li>
+            {list_prop}
+         <li className="nav-item">&nbsp;</li>   
+         <li className="nav-item">&nbsp;</li> <li className="nav-item">&nbsp;</li><li className="nav-item">&nbsp;</li>
+
                             
                             <li><img src={expedia} /></li>
                         </ul>
@@ -144,20 +156,20 @@ setguests(e){
                 <div className="form-group row"  style={{paddingLeft:"10%"}} >
                 
             <div className="col-md-3">
-            <input type="text" className="form-control" name="location" placeholder="   Where do you want to go?" onChange={this.setlocation}/>
+            <input type="text" className="form-control" name="location" placeholder="   Where do you want to go?" onChange={this.setlocation} value={this.state.location}/>
             </div>
             <div className="col-md-1" id="spacing-right1">
-            <input type="date" className="form-control date" name="start" placeholder="Arrive"   onChange={this.setstart} />
+            <input type="date" className="form-control date" name="start" placeholder="Arrive"   onChange={this.setstart} value={this.state.start}/>
             </div>
             <div className="col-md-1" id="spacing-right">
-            <input type="date" className="form-control date" name="end" placeholder="Depart" onChange={this.setend}/>
+            <input type="date" className="form-control date" name="end" placeholder="Depart" onChange={this.setend} value={this.state.end}/>
             </div>
             <div className="col-md-1" id="spacing-right">
-            <input type="number" className="form-control date" name="guest" placeholder="Guests" onChange={this.setguests} min="1"/>       
+            <input type="number" className="form-control date" name="guest" placeholder="Guests" onChange={this.setguests} min="1" value={this.state.guests}/>       
              </div>
 
              <div className="col-md-1">
-             <button id="search-button" type="button" className="btn btn-primary"><Link to={`/search/${this.state.location}/${this.state.start}/${this.state.end}/${this.state.guests}`}>Search</Link></button>
+             <button id="search-button" type="button" className="btn btn-primary"><Link to={`/findproperty/search/${this.state.location}/${this.state.start}/${this.state.end}/${this.state.guests}`}>Search</Link></button>
              </div>
                 
                 

@@ -1,15 +1,15 @@
 #carousel-container{
     background-color: rgba(229, 237, 243, 0.842);
-    width: 70%;
-    height: 35%;
-    padding-top: 5%;
+    width: 450px;
+    height: 350px;
+    padding-top: 40px;
    
 }
 #image-cont{
-    width: 85%;
-    height:70%;
-    padding-bottom: 3%;
-    padding-left: 15%;
+    width: 400px;
+    height:300px;
+    padding-bottom: 0px;
+    padding-left: 50px;
 
     
 }

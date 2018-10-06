@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Route} from 'react-router-dom';
+import {BrowserRouter,Route} from 'react-router-dom';
 import {Link} from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
@@ -107,6 +107,7 @@ this.setState({
 
 
       FindComponent=()=>{
+          console.log('I am called..')
         switch (this.state.step) {
           case 1:
             return <Redirect to="/propertylocation"></Redirect>
@@ -131,18 +132,22 @@ this.setState({
   render(){
       let red=this.state.status===200?<Redirect to='/'/>:null;
         return(
-           <div>
-                {/*Render Different Component based on Route*/}
-                {red}
-                
-                <Route path="/propertylocation" render={(props) => <PropertyLocation {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>} />
-                <Route path="/propertydetails" render={(props) => <PropertyDetails {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>}/>
-                
-                <Route path="/addphotos" render={(props) => <AddPhotos {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>}/>
-                <Route path="/price" render={(props) => <PriceAndAvailability {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep} addProperty={this.addProperty}/>}/>
-                {this.FindComponent()}
-            </div>
+            <div>
+            <BrowserRouter>
+                <div>
+                    {/*Render Different Component based on Route*/}
+                    <Route path="/propertylocation" render={(props) => <PropertyLocation {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>} />
+                    <Route path="/propertydetails" render={(props) => <PropertyDetails {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>}/>
+                    
+                    <Route path="/addphotos" render={(props) => <AddPhotos {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>}/>
+                    <Route path="/price" render={(props) => <PriceAndAvailability {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep} addProperty={this.addProperty}/>}/>
+                    {this.FindComponent()}
+                </div>
+            </BrowserRouter>
+           
+            {red}
             
+            </div>
         )
     }
 }

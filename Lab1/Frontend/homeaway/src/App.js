@@ -16,6 +16,7 @@ import DetailsView from './components/detailsview';
 import Trips from './components/trips';
 import OwnerDashboard from './components/ownerdashboard';
 import ShowTravelers from './components/showtravelers';
+import SearchProperty from './components/searchproperty.js';
 
 class App extends Component {
 constructor(){
@@ -28,27 +29,27 @@ constructor(){
 
       <div className="App">
         <BrowserRouter>
-          <Switch>
+          <div>
           <Route path="/" component={Home} exact/>
           <Route path="/travelerlogin" component={Login}/>
           <Route path="/ownerlogin" component={OwnerLogin}/>
           <Route path='/signup' component={SignUp}/>
           <Route path='/dashboard' component={Dashboard} />
-          <Route path='/profile' component={Profile}/>
-          <Route path='/profile' component={Profile}/>
-          <Route path='/mytrips' component={Trips}/>
-          <Route path='/ownerdashboard' component={OwnerDashboard}/>
+          <Route path='/dashboard/profile' component={Profile}/>
+          <Route path='/dashboard/mytrips' component={Trips}/>
+          <Route path='/dashboard/ownerdashboard' component={OwnerDashboard}/>
+          <Route path='/findproperty' component={SearchProperty}/>
 
           <Route path='/details' component={ImgMediaCard}/>
-          <Route path="/search/:loc/:start/:end/:count" component={ImgMediaCard}/>
+          <Route path="/findproperty/search/:loc/:start/:end/:guests" component={ImgMediaCard}/>
           <Route path="/detailsview/:propid/:start/:end/:guests" component={DetailsView}/>
           <Route path="/fetchtravelers/:imageName/:property_id/:headline/:property_type/:bathrooms/:bedrooms/:accomodates/:rate" component={ShowTravelers}/>
 
-          <Route to="/postproperty" component={PostProperty}/>
-
+          <Route path="/postproperty" component={PostProperty}/>
+          </div>
 
           
-          </Switch>
+         
         </BrowserRouter>
       </div>
     );

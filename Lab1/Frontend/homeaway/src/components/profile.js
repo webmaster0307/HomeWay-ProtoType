@@ -159,7 +159,7 @@ this.setState({
   
 
 }
-componentWillMount(){
+componentDidMount(){
   if(cookie.load('traveler')){
     var data={
       emailaddress:cookie.load('traveler')
@@ -218,21 +218,11 @@ componentWillMount(){
 
 }
     render() {
+      let message=this.state.status==200?"Profile is successfully updated":null;
+
         return (
             <div>
-            <div>
-            <nav className="navbar navbar-default">
-                    <div className="container-fluid">
-                        <div className="navbar-header">
-                            <a className="navbar-brand" href="/"><img className="brand" src={Logo1} /></a>
-                        </div>
-                        <ul className="nav navbar-right">
-                            <li><img src={expedia} /></li>
-                        </ul>
-                    </div>
-                </nav>
             
-            </div>
 
 
             <div id="top" className="panel panel-default"></div>
@@ -267,7 +257,7 @@ componentWillMount(){
                                     <form onSubmit={this.saveprofile} encType="multipart/form-data">
                                     <img id="target" src={this.state.display} className="avatar img-circle img-thumbnail" alt="avatar"/>
         <h6>Upload a new photo</h6>
-        <input type="file" className="text-center center-block file-upload" onChange={this.addphoto} className="filetype"/>
+        <input type="file" className="text-center center-block file-upload" onChange={this.addphoto} className="filetype" />
                                       <div className="form-group row">
                                         
                                         <div className="col-8">
@@ -342,7 +332,7 @@ componentWillMount(){
                                           <button name="submit" type="submit" className="btn btn-primary">Save Changes</button>
                                         </div>
                                       </div>
-                                     
+                                     {message}
                                     </form>
                                 </div>
                             </div>

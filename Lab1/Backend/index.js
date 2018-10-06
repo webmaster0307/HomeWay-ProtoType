@@ -11,6 +11,8 @@ var fs=require('fs');
 var multer=require('multer');
 var md5=require('md5');
 var fs=require('fs');
+const bcrypt = require('bcrypt');
+
 var uuidv4 = require('uuid/v4');
 
 var maxSize=1000000*90;
@@ -92,7 +94,7 @@ app.post('/travelerlogin', function (req, res) {
     var emailaddress = req.body.emailaddress;
     var password = req.body.password;
     var sql = "SELECT *  FROM traveler_login_data WHERE emailaddress = " +
-        mysql.escape(emailaddress) + "and password = " + mysql.escape(password);
+        mysql.escape(emailaddress);
 
     pool.getConnection(function (err, con) {
         if (err) {
@@ -108,15 +110,20 @@ app.post('/travelerlogin', function (req, res) {
                     res.writeHead(400, {
                         'Content-Type': 'text/plain'
                     })
-                    res.end("Incorrect emailaddress or password");
+                    res.end("Incorrect emailaddress");
                 } else {
                     let temp = JSON.stringify(result[0]);
 
                     temp = JSON.parse(temp);
 
                     let name = temp.firstname;
+                    let hash=temp.password;
                     let username = temp.emailaddress;
-                    console.log(name);
+
+                    if(bcrypt.compareSync(password, hash)) {
+                        // Passwords match
+
+                        console.log(name);
 
 
                     res.cookie('traveler', username, { maxAge: 900000, httpOnly: false, path: '/' });
@@ -127,6 +134,15 @@ app.post('/travelerlogin', function (req, res) {
                     })
 
                     res.end("Successful Login");
+                       } else {
+                        res.writeHead(400, {
+                            'Content-Type': 'text/plain'
+                        })
+    
+                        res.end("Login Unsuccessfull");
+                       }
+
+                    
 
                 }
             });
@@ -496,33 +512,8 @@ app.post('/gettravelerprofile', function (req, res) {
 
 
         const testFolder = path.join(__dirname,'/uploads');
-        var fileList=[];
-        var file1 = md5(req.body.emailaddress);
-        var fileName="";
-        
-          
-
-        fs.readdir(testFolder, (err, files) => {
-            files.forEach(file => {
-              if(file.startsWith(file1)){
-                  console.log(file);
-                  fileName=file.toString();
-
-              }
-              else{
-                  filename="";
-              }
-            });
-            
-          })
-
 
           
-       
-    
-    
-    
-      
 
     pool.getConnection(function (err, con) {
         if (err) {
@@ -556,11 +547,8 @@ app.post('/gettravelerprofile', function (req, res) {
       
                         
                     }
-                    if(fileName==""){
-                        data.photo="";
-                    }
-                    else{
-                        data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',fileName))).toString('base64');
+                    if(temp.profile_image!=""){
+                    data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',temp.profile_image))).toString('base64');
                     }
                      res.writeHead(200, {
                         'Content-Type': 'application/json'
@@ -590,32 +578,13 @@ app.get('/getownerprofile', function (req, res) {
 
 
         const testFolder = path.join(__dirname,'/uploads');
-        var fileList=[];
-        var file1 = md5(req.query.username);
-        var fileName="";
+        
         
           
 
-        fs.readdir(testFolder, (err, files) => {
-            files.forEach(file => {
-              if(file.startsWith(file1)){
-                  console.log(file);
-                  fileName=file.toString();
-
-              }
-              else{
-                  filename="";
-              }
-            });
             
-          })
-
-
-          
-       
-    
-    
-    
+                
+        
       
 
     pool.getConnection(function (err, con) {
@@ -644,17 +613,14 @@ app.get('/getownerprofile', function (req, res) {
                         citycountry:temp.citycountry,
                         company:temp.company,
                         school:temp.school,
-      hometown:temp.school,
+      hometown:temp.hometown,
       languages:temp.languages,
       gender:temp.gender,
       
                         
                     }
-                    if(fileName==""){
-                        data.photo="";
-                    }
-                    else{
-                        data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',fileName))).toString('base64');
+                    if(temp.profile_image!=""){
+                    data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',temp.profile_image))).toString('base64');
                     }
                      res.writeHead(200, {
                         'Content-Type': 'application/json'
@@ -688,8 +654,21 @@ app.post('/addprofile',upload.single('photo'), function (req, res) {
 //console.log(JSON.stringify(req.body));
 console.log("Res : ",res.file);
 console.log("Res 1: ",req.body);
-var profile_image=req.file.filename;
-
+if(req.file==undefined){
+    var sql = "UPDATE traveler_login_data SET firstname = " +
+    mysql.escape(req.body.firstname) + " ,lastname=" +
+    mysql.escape(req.body.lastname) + ",aboutme=" + 
+    mysql.escape(req.body.aboutme) + " ,citycountry=" + 
+    mysql.escape(req.body.citycountry) + " ,company=" + 
+    mysql.escape(req.body.company) + ",school=" + 
+    mysql.escape(req.body.school) + ",hometown=" + 
+    mysql.escape(req.body.hometown) + ",languages=" + 
+    mysql.escape(req.body.languages) + ",gender=" + 
+    mysql.escape(req.body.gender) +   
+    " WHERE emailaddress = " +
+    mysql.escape(req.body.username);
+}else{
+    var profile_image=req.file.filename;
     var sql = "UPDATE traveler_login_data SET firstname = " +
         mysql.escape(req.body.firstname) + " ,lastname=" +
         mysql.escape(req.body.lastname) + ",aboutme=" + 
@@ -703,6 +682,10 @@ var profile_image=req.file.filename;
         mysql.escape(profile_image) +
         " WHERE emailaddress = " +
         mysql.escape(req.body.username);
+}
+
+
+    
 
 
         console.log("fdsf",sql);
@@ -753,21 +736,38 @@ app.post('/addprofileowner',upload.single('photo'), function (req, res) {
 //console.log(JSON.stringify(req.body));
 console.log("Res : ",res.file);
 console.log("Res 1: ",req.body);
-var profile_image=req.file.filename;
-
+if(req.file==undefined){
     var sql = "UPDATE owner_login_data SET firstname = " +
-        mysql.escape(req.body.firstname) + " ,lastname=" +
-        mysql.escape(req.body.lastname) + ",aboutme=" + 
-        mysql.escape(req.body.aboutme) + " ,citycountry=" + 
-        mysql.escape(req.body.citycountry) + " ,company=" + 
-        mysql.escape(req.body.company) + ",school=" + 
-        mysql.escape(req.body.school) + ",hometown=" + 
-        mysql.escape(req.body.hometown) + ",languages=" + 
-        mysql.escape(req.body.languages) + ",gender=" + 
-        mysql.escape(req.body.gender) +    ",profile_image=" + 
-        mysql.escape(profile_image) +
-        " WHERE emailaddress = " +
-        mysql.escape(req.body.username);
+    mysql.escape(req.body.firstname) + " ,lastname=" +
+    mysql.escape(req.body.lastname) + ",aboutme=" + 
+    mysql.escape(req.body.aboutme) + " ,citycountry=" + 
+    mysql.escape(req.body.citycountry) + " ,company=" + 
+    mysql.escape(req.body.company) + ",school=" + 
+    mysql.escape(req.body.school) + ",hometown=" + 
+    mysql.escape(req.body.hometown) + ",languages=" + 
+    mysql.escape(req.body.languages) + ",gender=" + 
+    mysql.escape(req.body.gender) +    
+    " WHERE emailaddress = " +
+    mysql.escape(req.body.username);
+}else{
+    var profile_image=req.file.filename;
+    var sql = "UPDATE owner_login_data SET firstname = " +
+    mysql.escape(req.body.firstname) + " ,lastname=" +
+    mysql.escape(req.body.lastname) + ",aboutme=" + 
+    mysql.escape(req.body.aboutme) + " ,citycountry=" + 
+    mysql.escape(req.body.citycountry) + " ,company=" + 
+    mysql.escape(req.body.company) + ",school=" + 
+    mysql.escape(req.body.school) + ",hometown=" + 
+    mysql.escape(req.body.hometown) + ",languages=" + 
+    mysql.escape(req.body.languages) + ",gender=" + 
+    mysql.escape(req.body.gender) + ",profile_image=" + 
+    mysql.escape(profile_image) +   
+    " WHERE emailaddress = " +
+    mysql.escape(req.body.username);
+}
+
+
+    
 
 
         console.log("fdsf",sql);
@@ -884,55 +884,64 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
         console.log("Inside Sign Up Request Handler");
         var emailaddress = req.body.emailaddress;
         console.log(req.body.firstname);
-        var str = "select * from traveler_login_data where emailaddress= " + mysql.escape(emailaddress);
-        var sql = "INSERT INTO traveler_login_data VALUES ( " +
-            mysql.escape(null) + " ," +
-            mysql.escape(req.body.firstname) + " , " + mysql.escape(req.body.lastname) + " , " +
-            mysql.escape(req.body.emailaddress) + ", " + mysql.escape(req.body.password) + " , " + mysql.escape(null) + ", " + mysql.escape(null) + ", " + mysql.escape(null) + ", " + mysql.escape(null) + ", " + mysql.escape(null) + ", " + mysql.escape(null) + ", " + mysql.escape(null) + ") ";
-        pool.getConnection(function (err, con) {
-            if (err) {
-                res.writeHead(400, {
+        bcrypt.hash(req.body.password, 10, function(err, hash) {
+            // Store hash in database
+            
+            var str = "select * from traveler_login_data where emailaddress= " + mysql.escape(emailaddress);
+            var sql = "INSERT INTO traveler_login_data VALUES ( " +
+                mysql.escape(null) + " ," +
+                mysql.escape(req.body.firstname) + " , " + mysql.escape(req.body.lastname) + " , " +
+                mysql.escape(req.body.emailaddress) + ", " + mysql.escape(hash) + " , " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") +") ";
+    
+            pool.getConnection(function (err, con) {
+                if (err) {
+                    res.writeHead(400, {
+    
+                        'Content-Type': 'text/plain'
+                    })
+    
+                    res.end("Could Not Get Connection Object");
+                    console.log("got1");
+                }
+                else {
+    
+                    con.query(str, function (err, result) {
+                        if (err || result.length === 1) {
+    
+                            res.writeHead(201, {
+                                'Content-Type': 'text/plain'
+                            })
+                            res.end("User with this email address already exist");
+    
+                        } else {
+    
+                            con.query(sql, function (err, result) {
+    
+                                if (err) {
+                                    console.log("got");
+                                    res.writeHead(400, {
+                                        'Content-Type': 'text/plain'
+                                    })
+    
+                                    res.end("Error");
+                                } else {
+                                    console.log("else");
+                                    res.writeHead(200, {
+                                        'Content-Type': 'text/plain'
+                                    })
+                                    res.end('User successfully added');
+                                }
+                            });
+                        }
+                    });
+    
+                }
+            });
+        
 
-                    'Content-Type': 'text/plain'
-                })
-
-                res.end("Could Not Get Connection Object");
-                console.log("got1");
-            }
-            else {
-
-                con.query(str, function (err, result) {
-                    if (err || result.length === 1) {
-
-                        res.writeHead(201, {
-                            'Content-Type': 'text/plain'
-                        })
-                        res.end("User with this email address already exist");
-
-                    } else {
-
-                        con.query(sql, function (err, result) {
-
-                            if (err) {
-                                console.log("got");
-                                res.writeHead(400, {
-                                    'Content-Type': 'text/plain'
-                                })
-
-                                res.end("Error");
-                            } else {
-                                console.log("else");
-                                res.writeHead(200, {
-                                    'Content-Type': 'text/plain'
-                                })
-                                res.end('User successfully added');
-                            }
-                        });
-                    }
-                });
-
-            }
-        });
+          });
+        
+       
     });
 
 
@@ -996,14 +1005,18 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
                         var collision=false;
                         let startDate = new Date(req.body.start);
                         let endDate = new Date(req.body.end);
+
+                        console.log("startdate",startDate);
                         if(startDate<st || endDate>en){
                             invalid=true;
                         }
                         for(var i=0;i<temp.length;i++){
                             let tempStartDate = new Date(temp[i].start);
                             let tempEndDate = new Date(temp[i].end);
+                            
                             if(invalid==false){
-                                if(startDate >= tempStartDate && endDate <= tempEndDate){
+                                if((startDate >= tempStartDate && endDate <= tempEndDate)||(startDate >= tempStartDate && endDate <= tempEndDate)||(startDate <= tempStartDate && endDate >= tempEndDate)){
+                                    console.log("Collision");
                                     collision=true;
                                     
                                     break;

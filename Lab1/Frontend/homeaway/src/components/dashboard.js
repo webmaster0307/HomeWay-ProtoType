@@ -20,10 +20,10 @@ class Dashboard extends Component {
             navTop = (
                 <ul className="nav nav-tabs">
                 <li  id="it1" className="nav-item">
-                <Link className="nav-link active" to="/mytrips" >My Trips</Link>
+                <Link className="nav-link active" to="/dashboard/mytrips" >My Trips</Link>
             </li>
             <li id="it2" className="nav-item">
-                <Link className="nav-link" to="/profile">Profile</Link>
+                <Link className="nav-link" to="/dashboard/profile">Profile</Link>
             </li>
             <li id="it2" className="nav-item">
                 <a className="nav-link" href="#">Account</a>
@@ -38,10 +38,10 @@ class Dashboard extends Component {
             navTop = (
                 <ul className="nav nav-tabs">
                 <li id="it2" className="nav-item">
-                <Link className="nav-link" to="/ownerdashboard">Owner Dashboard</Link>
+                <Link className="nav-link" to="/dashboard/ownerdashboard">Owner Dashboard</Link>
             </li>  
             <li id="it2" className="nav-item">
-                <Link className="nav-link" to="/profile">Profile</Link>
+                <Link className="nav-link" to="/dashboard/profile">Profile</Link>
             </li>
             <li id="it2" className="nav-item">
                 <a className="nav-link" href="#">Account</a>

@@ -198,6 +198,7 @@ componentWillMount(){
   </div>
 
   </div>
+  <input style={{paddingTop:"40px"}} type="hidden"></input>
 
     <hr/>
     <div id="detail-heading">

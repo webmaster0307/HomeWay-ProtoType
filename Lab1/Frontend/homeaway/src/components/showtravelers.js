@@ -12,7 +12,8 @@ constructor(props){
   super(props);  
 this.state={
     travelers:null,
-    status:null
+    status:null,
+    message:null
 }
  
 }
@@ -24,11 +25,17 @@ componentDidMount(){
     }}).then(res=>{
         let temp=JSON.stringify(res.data);
         temp=JSON.parse(temp);
+        console.log("sds",temp);
+        if(temp=="Invalid property"){
+            this.setState({
+                message:"No Bookings for this property."
+            })
+        }else{
         this.setState({
             travelers:temp,
             status:res.status
         })
-    }).catch()
+    }}).catch()
 }
 
   render() {
@@ -98,6 +105,7 @@ componentDidMount(){
 
     </div>
     {details}
+    <h3>{this.state.message}</h3>
     </div>
     );
   }

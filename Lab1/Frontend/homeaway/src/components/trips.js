@@ -60,19 +60,7 @@ componentDidMount(){
 
 
             <div className="trips">
-            <div>
-            <nav className="navbar navbar-default">
-                    <div className="container-fluid">
-                        <div className="navbar-header">
-                            <a className="navbar-brand" href="/"><img className="brand" src={Logo1} /></a>
-                        </div>
-                        <ul className="nav navbar-right">
-                            <li><img src={expedia} /></li>
-                        </ul>
-                    </div>
-                </nav>
             
-            </div>
 
             <div>
             
