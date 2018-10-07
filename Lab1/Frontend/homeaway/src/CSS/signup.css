@@ -34,7 +34,14 @@ h1,.h1{font-size:40px;font-weight:300;font-family:"Roboto",Arial,sans-serif;colo
   max-width: 56%;
   padding: 50px 70px 70px 71px;
 }
+#main-cont-signup{
+  background: #ffffff none repeat scroll 0 0;
+  border-radius: 2px;
+  margin: 10px auto 30px;
+  max-width: 58%;
+  padding: 50px 70px 70px 71px;
 
+}
 .login-form .form-group {
   margin-bottom:15px;
 }

@@ -32,9 +32,10 @@ componentDidMount(){
         let temp = JSON.stringify(res.data);
 
         temp = JSON.parse(temp);
+        
         this.setState({
             properties:temp,
-            dataavailable:res.data.length!=0?"available":"not-available",
+            dataavailable:res.data.length!=0?null:"You have no properties posted.",
             status:res.status
         })
     }).catch()
@@ -51,7 +52,7 @@ componentDidMount(){
         if (this.state.status === 200 && this.state.properties !== null) {
             details = this.state.properties.map(property => {
                 return (
-                    <ShowMyProperties data={property}/>
+                    <ShowMyProperties key={Math.random}data={property}/>
                 )
             })
 
@@ -66,6 +67,7 @@ componentDidMount(){
             
             <h3>My properties</h3><br/>
 {details}
+<h4>{this.state.dataavailable}</h4>
             </div>
 
 

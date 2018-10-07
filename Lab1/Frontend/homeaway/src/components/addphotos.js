@@ -1,5 +1,8 @@
 import React from 'react';
 import '../../src/CSS/postproperty.css';
+import Logo1 from '../../src/logo-bceheader.svg';
+import expedia from '../../src/birdhouse-bceheader.svg';
+
 import ReactDropzone from "react-dropzone";
 var files=[];
 var filespreview=[];
@@ -7,10 +10,10 @@ var minCount=2;
 var maxCount=4;
 var dropstyle={
 "height": "200px",
-"border-width": "2px",
-"border-color": "rgb(126, 125, 125)",
-"border-style":"dashed",
-"border-radius": "5px",
+"borderWidth": "2px",
+"borderColor": "rgb(126, 125, 125)",
+"borderStyle":"dashed",
+"borderRadius": "5px",
 
 }
 function AddPhotos (props){
@@ -71,6 +74,23 @@ var addPhotos=(e)=>{
 
   return (
     <div className="App">
+    <div>
+    <nav className="navbar navbar-default">
+                  <div className="container-fluid">
+                      <div className="navbar-header">
+                          <a className="navbar-brand" href="/"><img className="brand" src={Logo1} /></a>
+                      </div>
+                      <ul className="nav navbar-right">
+                          <li><img src={expedia} /></li>
+                      </ul>
+                  </div>
+              
+          
+                  </nav>
+    
+    
+    
+    </div>
     <form id="msform" action="" method="post">
    
 

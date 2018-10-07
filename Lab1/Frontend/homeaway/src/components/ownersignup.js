@@ -6,7 +6,7 @@ import axios from 'axios';
 import '../../src/CSS/signup.css';
 import '../../src/CSS/bootstrap-social.css';
 
-class SignUp extends Component {
+class OwnerSignUp extends Component {
     constructor(){
         super();
         this.state={
@@ -53,7 +53,7 @@ class SignUp extends Component {
             password:this.state.password
         }
 
-        axios.post('http://localhost:3001/signup',data)
+        axios.post('http://localhost:3001/ownersignup',data)
         .then(res=>{
             if(res.status!==200){
                 this.setState({
@@ -170,4 +170,4 @@ class SignUp extends Component {
             }
         }
         
-        export default SignUp;
+        export default OwnerSignUp;

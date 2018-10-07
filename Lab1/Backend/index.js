@@ -126,7 +126,7 @@ app.post('/travelerlogin', function (req, res) {
                         console.log(name);
 
 
-                    res.cookie('traveler', username, { maxAge: 900000, httpOnly: false, path: '/' });
+                    res.cookie('traveler', username, { maxAge: 9000000, httpOnly: false, path: '/' });
                     req.session.user = username;
                     console.log("Session",req.session.user);
                     res.writeHead(200, {
@@ -155,17 +155,17 @@ app.post('/travelerlogin', function (req, res) {
 //fetch properties for details view
 
 
-app.post('/fetchproperties', function(req,res){
-    console.log("in fetch");
-    console.log(req.body);
-    console.log(typeof(req.body.location));
+app.get('/fetchproperties', function(req,res){
+    //console.log("in fetch");
+    //console.log(req.body);
+    //console.log(typeof(req.body.location));
 
     
     
     var sql = "SELECT * FROM property_details WHERE accomodates >= " +
-    mysql.escape(req.body.guests) + " AND start <="+
-    mysql.escape(req.body.start)+ " AND end >="+
-    mysql.escape(req.body.end)+"AND address LIKE "+ mysql.escape("%" + req.body.location + "%") ; //"'%San Carlos%'";
+    mysql.escape(req.query.guests) + " AND start <="+
+    mysql.escape(req.query.start)+ " AND end >="+
+    mysql.escape(req.query.end)+"AND address LIKE "+ mysql.escape("%" + req.query.location + "%") ; //"'%San Carlos%'";
     pool.getConnection(function (err, con) {
         if (err) {
             res.writeHead(400, {
@@ -244,6 +244,8 @@ app.get('/mytrips', function(req,res){
             let temp = JSON.stringify(result);
 
             temp = JSON.parse(temp);
+           if(temp.length!=0){
+console.log("temp",temp);
 
             var ids=[];
 
@@ -272,7 +274,7 @@ app.get('/mytrips', function(req,res){
         
                     temp1 = JSON.parse(temp1);
         
-                    
+                    console.log("temp1",temp1);
                     console.log("temp1",temp1);
 
                     for(var i=0;i<temp.length;i++){
@@ -288,16 +290,7 @@ app.get('/mytrips', function(req,res){
 
                         }
                     }
-        
-                    
-                 
-                   
-        
-                    //console.log("temp",temp);
-                    
-                    
-                        
-                        
+                                                
                     res.writeHead(200,{
                         'Content-Type' : 'application/json'
                     })
@@ -309,7 +302,14 @@ app.get('/mytrips', function(req,res){
                 
                 
             
+        }else{
+            res.writeHead(200,{
+                'Content-Type' : 'application/json'
+            })
+            res.end(JSON.stringify(temp));
         }
+
+    }
     });
 }
     
@@ -449,7 +449,7 @@ app.post('/ownerlogin', function (req, res) {
     var emailaddress = req.body.emailaddress;
     var password = req.body.password;
     var sql = "SELECT *  FROM owner_login_data WHERE emailaddress = " +
-        mysql.escape(emailaddress) + "and password = " + mysql.escape(password);
+        mysql.escape(emailaddress);
 
     pool.getConnection(function (err, con) {
         if (err) {
@@ -472,11 +472,15 @@ app.post('/ownerlogin', function (req, res) {
                     temp = JSON.parse(temp);
 
                     let name = temp.firstname;
+                    let hash=temp.password;
+
                     let username = temp.emailaddress;
+
+                    if(bcrypt.compareSync(password, hash)) {
                     console.log(name);
 
 
-                    res.cookie('owner', username, { maxAge: 900000, httpOnly: false, path: '/' });
+                    res.cookie('owner', username, { maxAge: 9000000, httpOnly: false, path: '/' });
                     req.session.user = username;
                     console.log("Session",req.session.user);
                     res.writeHead(200, {
@@ -484,6 +488,14 @@ app.post('/ownerlogin', function (req, res) {
                     })
 
                     res.end("Successful Login");
+
+                    }else{
+                        res.writeHead(400, {
+                            'Content-Type': 'text/plain'
+                        })
+    
+                        res.end("Login Unsuccessfull");
+                }
 
                 }
             });
@@ -503,10 +515,10 @@ app.post('/ownerlogin', function (req, res) {
 
 
 
-app.post('/gettravelerprofile', function (req, res) {
+app.get('/gettravelerprofile', function (req, res) {
 
     console.log("Inside Traveler Profile Get Request");
-    var emailaddress=req.body.emailaddress;
+    var emailaddress=req.query.emailaddress;
     var sql = "SELECT *  FROM traveler_login_data WHERE emailaddress = " +
         mysql.escape(emailaddress);
 
@@ -879,7 +891,7 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
 
 
 
-//Sign Up
+//Traveler Sign Up
     app.post('/signup', function (req, res) {
         console.log("Inside Sign Up Request Handler");
         var emailaddress = req.body.emailaddress;
@@ -945,6 +957,74 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
     });
 
 
+
+
+//Owner Sign Up
+app.post('/ownersignup', function (req, res) {
+    console.log("Inside Owner Sign Up Request Handler");
+    var emailaddress = req.body.emailaddress;
+    console.log(req.body.firstname);
+    bcrypt.hash(req.body.password, 10, function(err, hash) {
+        // Store hash in database
+        
+        var str = "select * from owner_login_data where emailaddress= " + mysql.escape(emailaddress);
+        var sql = "INSERT INTO owner_login_data VALUES ( " +
+            mysql.escape(null) + " ," +
+            mysql.escape(req.body.firstname) + " , " + mysql.escape(req.body.lastname) + " , " +
+            mysql.escape(req.body.emailaddress) + ", " + mysql.escape(hash) + " , " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") +") ";
+
+        pool.getConnection(function (err, con) {
+            if (err) {
+                res.writeHead(400, {
+
+                    'Content-Type': 'text/plain'
+                })
+
+                res.end("Could Not Get Connection Object");
+                console.log("got1");
+            }
+            else {
+
+                con.query(str, function (err, result) {
+                    if (err || result.length === 1) {
+
+                        res.writeHead(201, {
+                            'Content-Type': 'text/plain'
+                        })
+                        res.end("User with this email address already exist");
+
+                    } else {
+
+                        con.query(sql, function (err, result) {
+
+                            if (err) {
+                                console.log("got");
+                                res.writeHead(400, {
+                                    'Content-Type': 'text/plain'
+                                })
+
+                                res.end("Error");
+                            } else {
+                                console.log("else");
+                                res.writeHead(200, {
+                                    'Content-Type': 'text/plain'
+                                })
+                                res.end('User successfully added');
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+    
+
+      });
+    
+   
+});
+
+
 //Book Property
 
     app.post('/bookproperty', function (req, res) {
@@ -968,6 +1048,7 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
                 console.log("got1");
             }
             else{
+                
                 con.query(available, function (err, result) {
                     if (err) {
 
@@ -979,10 +1060,10 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
                     }
             
             else {
-
+                
                let temp3=JSON.stringify(result);
                 temp3=JSON.parse(temp3);
-
+console.log("temp3",temp3);
                 var st=new Date(temp3[0].start);
                 var en= new Date(temp3[0].end);
                 console.log("start",st);
@@ -1005,9 +1086,10 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
                         var collision=false;
                         let startDate = new Date(req.body.start);
                         let endDate = new Date(req.body.end);
-
+                        console.log("enddate",endDate);
                         console.log("startdate",startDate);
                         if(startDate<st || endDate>en){
+                            console.log("in invalid");
                             invalid=true;
                         }
                         for(var i=0;i<temp.length;i++){

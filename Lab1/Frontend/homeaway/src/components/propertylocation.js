@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
+import Logo1 from '../../src/logo-bceheader.svg';
 
 import '../../src/CSS/postproperty.css';
 import '../../src/CSS/propertylocation.css';
@@ -33,6 +34,23 @@ function PropertyLocation(props){
     
         return (
             <div className="App">
+            <div>
+      <nav className="navbar navbar-default">
+                    <div className="container-fluid">
+                        <div className="navbar-header">
+                            <a className="navbar-brand" href="/"><img className="brand" src={Logo1} /></a>
+                        </div>
+                        <ul className="nav navbar-right">
+                            <li><img src={expedia} /></li>
+                        </ul>
+                    </div>
+                
+            
+                    </nav>
+      
+      
+      
+      </div>
                 <form id="msform" action="" method="post">
 
 

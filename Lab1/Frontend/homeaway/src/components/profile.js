@@ -16,15 +16,15 @@ class Profile extends Component {
     this.state={
       firstname:"",
       lastname:"",
-      aboutme:null,
-      citycountry:null,
-      company:null,
-      school:null,
-      hometown:null,
-      languagues:null,
-      gender:null,
-      photo:null,
-      display:null,
+      aboutme:"",
+      citycountry:"",
+      company:"",
+      school:"",
+      hometown:"",
+      languagues:"",
+      gender:"",
+      photo:"",
+      display:"",
       status:null
 
     }
@@ -164,7 +164,10 @@ componentDidMount(){
     var data={
       emailaddress:cookie.load('traveler')
     }
-    axios.post('http://localhost:3001/gettravelerprofile',data)
+    axios.get('http://localhost:3001/gettravelerprofile',{ params: {
+      emailaddress:data.emailaddress
+
+  }})
     .then(res=>{
       let imagePreview = 'data:image/jpg;base64, ' + res.data.photo;
       

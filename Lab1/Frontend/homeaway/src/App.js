@@ -6,6 +6,9 @@ import './App.css';
 import PropertyLocation from './components/propertylocation';
 import Dashboard from './components/dashboard';
 import SignUp from './components/signup';
+import OwnerSignUp from './components/ownersignup';
+import PropertyHeader from './components/propertyheader.js';
+
 import Navbar from './components/postpropertnavbar';
 import PostProperty from './components/postproperty';
 import Profile from './components/profile';
@@ -34,6 +37,8 @@ constructor(){
           <Route path="/travelerlogin" component={Login}/>
           <Route path="/ownerlogin" component={OwnerLogin}/>
           <Route path='/signup' component={SignUp}/>
+          <Route path='/ownersignup' component={OwnerSignUp}/>
+
           <Route path='/dashboard' component={Dashboard} />
           <Route path='/dashboard/profile' component={Profile}/>
           <Route path='/dashboard/mytrips' component={Trips}/>
@@ -44,6 +49,7 @@ constructor(){
           <Route path="/findproperty/search/:loc/:start/:end/:guests" component={ImgMediaCard}/>
           <Route path="/detailsview/:propid/:start/:end/:guests" component={DetailsView}/>
           <Route path="/fetchtravelers/:imageName/:property_id/:headline/:property_type/:bathrooms/:bedrooms/:accomodates/:rate" component={ShowTravelers}/>
+          <Route path="/propertyheader" component={PropertyHeader}/>
 
           <Route path="/postproperty" component={PostProperty}/>
           </div>

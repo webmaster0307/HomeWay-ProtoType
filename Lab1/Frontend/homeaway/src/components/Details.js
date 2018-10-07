@@ -30,7 +30,9 @@ this.state={
     location:props.match.params.loc,
     end:props.match.params.end,
     guests:props.match.params.guests,
-    dataavailable:null
+    dataavailable:null,
+    message:null
+
 }
     this.downloadData=this.downloadData.bind(this);
 }
@@ -45,24 +47,41 @@ this.state={
         guests:this.state.guests
       
     });
-    axios.post('http://localhost:3001/fetchproperties',{
+    if(this.state.start>this.state.end){
+        this.setState({
+            message:"Start date should be less than end date"
+        })
+        return;
+    }
+    axios.get('http://localhost:3001/fetchproperties',{ params:{
        
         start: this.state.start,
         end:this.state.end,
         location:this.state.location,
         guests:this.state.guests
       
-    }).then(res=>{
+    }}).then(res=>{
         console.log('Data downloaded')
         if(res.status===200){
           let temp = JSON.stringify(res.data);
 
           temp = JSON.parse(temp);
+          
           console.log(temp);
             this.setState({
               properties:temp,
-              status:res.status
+              status:res.status,
+              message:null
             })
+            if(temp.length==0){
+                this.setState({
+                    dataavailable:"No property to match your search criteria, try with different filters"
+                })
+            }else{
+                this.setState({
+                    dataavailable:null
+                })
+            }
             
         } else {
             this.setState({
@@ -98,7 +117,7 @@ componentDidUpdate(prevProps, prevState, snapshot){
     // console.log('New State');
     // console.log(this.state);
 
-    if (prevProps.match.params.loc !== this.props.match.params.loc) {
+    if ((prevProps.match.params.loc !== this.props.match.params.loc)||(prevProps.match.params.start !== this.props.match.params.start)||(prevProps.match.params.end !== this.props.match.params.end)) {
         this.setState({
             start:this.props.match.params.start,
             end:this.props.match.params.end,
@@ -113,6 +132,12 @@ componentDidUpdate(prevProps, prevState, snapshot){
     
     }
     else if(prevState.location !== this.state.location){
+        this.downloadData();
+    }
+    else if(prevState.start !== this.state.start){
+        this.downloadData();
+    }
+    else if(prevState.end !== this.state.end){
         this.downloadData();
     }
 }
@@ -132,7 +157,7 @@ componentDidUpdate(prevProps, prevState, snapshot){
       var search={
 start:this.state.start,
 end:this.state.end,
-guests:this.state.count
+guests:this.state.guests
 
       }
       if(this.state.status===200 && this.state.properties!==null){
@@ -146,8 +171,9 @@ guests:this.state.count
   return (
       <div>
       
-      
+      {this.state.message}
       {details}
+      <h3>{this.state.dataavailable}</h3>
       
       </div>
   );

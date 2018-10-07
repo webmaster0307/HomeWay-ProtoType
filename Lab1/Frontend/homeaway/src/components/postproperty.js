@@ -10,6 +10,9 @@ import AddPhotos from './addphotos';
 import Navbar from './postpropertnavbar';
 import PriceAndAvailability from './priceavailability';
 import cookie from 'react-cookies';
+import PropertyHeader from './propertyheader.js';
+
+
 
 //Create a Main Component
 var formfields={
@@ -136,6 +139,7 @@ this.setState({
             <BrowserRouter>
                 <div>
                     {/*Render Different Component based on Route*/}
+
                     <Route path="/propertylocation" render={(props) => <PropertyLocation {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>} />
                     <Route path="/propertydetails" render={(props) => <PropertyDetails {...props} formfields={formfields} saveData={this.saveData} setStep={this.setStep}/>}/>
                     

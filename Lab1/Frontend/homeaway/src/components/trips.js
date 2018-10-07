@@ -32,9 +32,10 @@ componentDidMount(){
         let temp = JSON.stringify(res.data);
 
         temp = JSON.parse(temp);
+        //console.log("len",temp.length);
         this.setState({
             properties:temp,
-            dataavailable:res.data.length!=0?"available":"not-available",
+            dataavailable:temp.length!=0?null:"You have no completed or upcomming trips",
             status:res.status
         })
     }).catch()
@@ -42,8 +43,8 @@ componentDidMount(){
 }
 
     render() {
-        console.log("trips", this.state.properties);
-        console.log(this.state.dataavailable);
+        //console.log("trips", this.state.properties);
+       // console.log(this.state.dataavailable);
 
 
         let details = null;
@@ -51,7 +52,7 @@ componentDidMount(){
         if (this.state.status === 200 && this.state.properties !== null) {
             details = this.state.properties.map(property => {
                 return (
-                    <ShowTrips data={property}/>
+                    <ShowTrips key={Math.random()} data={property}/>
                 )
             })
 
@@ -66,6 +67,7 @@ componentDidMount(){
             
             <h3>My Trips</h3><br/>
 {details}
+<h4>{this.state.dataavailable}</h4>
             </div>
 
 

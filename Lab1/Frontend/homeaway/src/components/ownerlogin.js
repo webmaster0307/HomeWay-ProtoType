@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link,Redirect } from 'react-router-dom';
+import { Link,Redirect,NavLink } from 'react-router-dom';
 import Logo from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
 import displayimg from '../../src/ownerlogin.png';
@@ -72,7 +72,7 @@ class OwnerLogin extends Component {
                 <nav className="navbar navbar-default">
                     <div className="container-fluid">
                         <div className="navbar-header">
-                            <a className="navbar-brand" href="#"><img className="brand" src={Logo} /></a>
+                            <a className="navbar-brand" href="/"><img className="brand" src={Logo} /></a>
                         </div>
                         <ul className="nav navbar-right">
                             <li><img src={expedia} /></li>
@@ -87,6 +87,7 @@ class OwnerLogin extends Component {
                 <div className="container">
                 
 <table>
+<tbody>
 <tr>
 <td id="displayim"><span><img  src={displayimg}></img></span>
 </td>
@@ -94,15 +95,14 @@ class OwnerLogin extends Component {
 <div className="login-form">
 <div className="main-div">
     <div className="panel">
-   <label>Owner Login</label><br/><hr/>
+   <label>Owner Login</label><hr/>
    
    </div>
     <form id="Login" onSubmit={this.checklogin}>
-
+    <h6 id="sign-up-owner"><NavLink to="/ownersignup">Sign Up</NavLink></h6>
         <div className="form-group">
 
-
-            <input type="email" class="form-control" id="inputEmail" placeholder="Email address" onChange={this.setemail} required/>
+            <input type="email" className="form-control" id="inputEmail" placeholder="Email address" onChange={this.setemail} required/>
 
         </div>
 
@@ -125,7 +125,7 @@ class OwnerLogin extends Component {
     </form>
     </div>
 
-</div></td></tr>
+</div></td></tr></tbody>
 
 </table></div>
 

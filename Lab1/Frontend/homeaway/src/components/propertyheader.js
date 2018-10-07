@@ -8,7 +8,7 @@ import { NavLink,Link} from 'react-router-dom';
 
 
 
-class SearchProperty extends Component{
+class PropertyHeader extends Component{
 constructor(props){
     super(props)
     
@@ -50,4 +50,4 @@ constructor(props){
 
 
 
-export default SearchProperty;
+export default PropertyHeader;
