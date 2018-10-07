@@ -7,7 +7,6 @@ import PropertyLocation from './components/propertylocation';
 import Dashboard from './components/dashboard';
 import SignUp from './components/signup';
 import OwnerSignUp from './components/ownersignup';
-import PropertyHeader from './components/propertyheader.js';
 
 import Navbar from './components/postpropertnavbar';
 import PostProperty from './components/postproperty';
@@ -49,7 +48,6 @@ constructor(){
           <Route path="/findproperty/search/:loc/:start/:end/:guests" component={ImgMediaCard}/>
           <Route path="/detailsview/:propid/:start/:end/:guests" component={DetailsView}/>
           <Route path="/fetchtravelers/:imageName/:property_id/:headline/:property_type/:bathrooms/:bedrooms/:accomodates/:rate" component={ShowTravelers}/>
-          <Route path="/propertyheader" component={PropertyHeader}/>
 
           <Route path="/postproperty" component={PostProperty}/>
           </div>

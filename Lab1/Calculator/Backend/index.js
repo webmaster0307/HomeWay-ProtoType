@@ -21,22 +21,26 @@ app.use(function(req, res, next) {
     next();
   });
 
-  app.post('/calculate',(req,res)=>{
+  app.get('/calculate',(req,res)=>{
         console.log("Inside Calculate");
         try{
-        var result=math.eval(req.body.expression);
+        var result=math.eval(req.query.expression);
         data=result;
         console.log(result);
 
         res.writeHead(200,{
-            'Content-Type' : 'text/plain'
+            'Content-Type' : 'application/json'
         })
-        res.end(""+ data);
+        let temp=JSON.stringify(data);
+        console.log(temp);
+        
+        res.end(""+ temp);
         }catch(e){
+            
             res.writeHead(400,{
                 'Content-Type' : 'text/plain'
             })
-            res.end("Error in evaluation");
+            res.end(`${e}`);
         }
 
   });

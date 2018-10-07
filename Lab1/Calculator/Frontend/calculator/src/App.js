@@ -36,11 +36,13 @@ class App extends Component {
      expression:this.state.expression
     }
   
-    axios.post("http://localhost:3001/calculate",data)
+    axios.get("http://localhost:3001/calculate",{params:{expression:this.state.expression}})
     .then(res=>{
-      
+      let temp=JSON.stringify(res);
+      temp=JSON.parse(temp);
+      console.log("Temp",temp);
       this.setState({
-        result:res.data,
+        result:temp.data,
         errMessage:null
       })
       
