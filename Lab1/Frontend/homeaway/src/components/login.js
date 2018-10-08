@@ -117,9 +117,7 @@ setpassword(e){
         <button type="submit" className="btn btn-primary">Log In</button>
         <br/>
         <br/>
-        <a className="btn btn-block btn-social btn-facebook">
-        <span className="fa fa-facebook"></span> Log in with Facebook
-      </a>
+    
         <br/>
         <label style={{color:"red"}}>{this.state.message}</label>
         <br/>

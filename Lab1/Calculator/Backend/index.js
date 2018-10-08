@@ -23,16 +23,18 @@ app.use(function(req, res, next) {
 
   app.get('/calculate',(req,res)=>{
         console.log("Inside Calculate");
+        console.log(req.query);
         try{
+            
         var result=math.eval(req.query.expression);
         data=result;
-        console.log(result);
+       
 
         res.writeHead(200,{
             'Content-Type' : 'application/json'
         })
         let temp=JSON.stringify(data);
-        console.log(temp);
+        console.log("Result of expression is",temp);
         
         res.end(""+ temp);
         }catch(e){

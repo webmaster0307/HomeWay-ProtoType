@@ -33,6 +33,15 @@ const storage = multer.diskStorage({
     },
   });
 
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database : "CMPE_273_Homeaway",
+    port: '8889',
+
+});
+
   const storageProperties = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, './properties');
@@ -389,15 +398,19 @@ app.get('/ownerproperties', function(req,res){
 //fetch properties for details view
 
 
-app.post('/getlisting', function(req,res){
+
+//get listing---old
+
+
+app.get('/getlisting', function(req,res){
     console.log("in get listing");
-    console.log("cbcb",req.body.property_id);
+    console.log("cbcb",req.query.property_id);
     //console.log(typeof(req.body.location));
 
     
     
     var sql = "SELECT * FROM property_details WHERE property_id = " +
-    mysql.escape(req.body.property_id); 
+    mysql.escape(req.query.property_id); 
     pool.getConnection(function (err, con) {
         if (err) {
             res.writeHead(400, {
@@ -435,6 +448,9 @@ temp.images=finalim;
     
 })
 })
+
+
+
 
 
 

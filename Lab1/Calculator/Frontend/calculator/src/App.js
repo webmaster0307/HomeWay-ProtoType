@@ -36,7 +36,9 @@ class App extends Component {
      expression:this.state.expression
     }
   
-    axios.get("http://localhost:3001/calculate",{params:{expression:this.state.expression}})
+    axios.get("http://localhost:3001/calculate",{params:{
+      expression:this.state.expression
+     }})
     .then(res=>{
       let temp=JSON.stringify(res);
       temp=JSON.parse(temp);

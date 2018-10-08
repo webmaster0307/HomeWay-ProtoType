@@ -110,8 +110,8 @@ setEnd(e){
         }
 componentWillMount(){
     console.log("cbcbc",this.state.property_id);
-    axios.post('http://localhost:3001/getlisting',{property_id:this.state.property_id
-      })
+    axios.get('http://localhost:3001/getlisting',{params:{property_id:this.state.property_id
+      }})
     .then(res=>{
         if(res.status===200){
             console.log(res.data);
