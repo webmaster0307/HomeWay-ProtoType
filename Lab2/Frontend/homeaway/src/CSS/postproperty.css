@@ -1,0 +1,129 @@
+
+/*basic reset*/
+* {margin: 0; padding: 0;}
+
+html {
+	height: 100%;
+	/*Image only BG fallback*/
+	
+	/*background = gradient + image pattern combo*/
+}
+
+body {
+	font-family: montserrat, arial, verdana;
+}
+/*form styles*/
+#msform {
+	width: 750px;
+	margin: 50px auto;
+	text-align: center;
+    position: relative;
+    padding: 47px 60px;
+}
+#msform fieldset {
+	background: white;
+	border: 0 none;
+	border-radius: 3px;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+	padding: 20px 30px;
+	box-sizing: border-box;
+	width: 80%;
+	margin: 0 10%;
+	
+	/*stacking fieldsets above each other*/
+	position: relative;
+}
+/*Hide all except first fieldset*/
+#msform fieldset:not(:first-of-type) {
+	display: none;
+}
+
+
+#heading{
+    font-size: 10px;
+    
+    color: #323f4d;
+    font-family: "Lato",Arial,Helvetica Neue,sans-serif;
+    
+    padding-left: 0px;
+
+}
+
+
+
+input.form-control{
+    background-image: linear-gradient(#0067db,#0067db);
+    background-size: 0 3px;
+    background-repeat: no-repeat;
+    background-position: bottom,50% calc(100% - 1px);
+}
+.form-control{
+    display: block;
+    width: 100%;
+    height: 56px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5rem;
+    color: #323f4d;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d3d8de;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+    font-family: "Lato",Arial,Helvetica Neue,sans-serif;
+}
+
+textarea.form-control{
+
+    display: block;
+    width: 100%;
+    
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5rem;
+    color: #242525;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d3d8de;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+    font-family: "Lato",Arial,Helvetica Neue,sans-serif;
+    overflow: auto;
+}
+
+#back{
+    border-radius: 20px;
+    width:80px;
+}
+.fs-title{
+    color:#242525;
+    padding-left: 18px;
+}
+#next{
+
+    padding-left: 280px;
+}
+#next1{
+    border-radius: 20px;
+    width:80px;
+}
+#ib{
+    font-size: 16px;
+}
+.finvent{
+    color: #242525;
+}
+
+.dropfiles{
+position: relative;
+width: 500px;
+height: 200px;
+border-width: 2px;
+border-color: rgb(126, 125, 125);
+border-style:dashed;
+border-radius: 5px;
+}

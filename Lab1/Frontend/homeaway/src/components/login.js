@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import { Field, reduxForm } from "redux-form";
+import traveler_login from '../actions/actions.js';
+import { connect } from "react-redux";
+
 import { Link ,NavLink,Redirect} from 'react-router-dom';
 import Logo from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
@@ -8,58 +12,64 @@ import '../../src/CSS/bootstrap-social.css';
 
 
 class Login extends Component {
-    constructor(props){
-        super(props);
-        this.state={
-            emailaddress:null,
-            password:null,
-            message:null,
-            status:null
-            
-        }
-        this.setemail=this.setemail.bind(this);
-        this.setpassword=this.setpassword.bind(this);
-        this.checklogin=this.checklogin.bind(this);
-    }
-setemail(e){
-this.setState({
-    emailaddress:e.target.value
+    
 
-})
-}
+    //Define component that you wanbt to render
+  renderField(field) {
+    const { meta: { touched, error } } = field;
+    const {type,placeholder,input,id}=field;
+    const className = `form-group ${touched && error ? "has-danger" : ""}`;
 
-setpassword(e){
-    this.setState({
-        password:e.target.value
-    })
-}
-    checklogin(e){
-        e.preventDefault();
-        let data={
-            emailaddress:this.state.emailaddress,
-            password:this.state.password
+    return (
+      <div className={className}>
+        
+        <input {...input} className="form-control" type={type}  id={id} placeholder={placeholder}/>
+        <div className="text-help" style={{color:"red"}}>
+          {touched ? error : ""}
+        </div>
+      </div>
+    );
+  }
 
-        }
+
+    // checklogin(e){
+    //     e.preventDefault();
+    //     let data={
+    //         emailaddress:this.state.emailaddress,
+    //         password:this.state.password
+
+    //     }
         //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        axios.post('http://localhost:3001/travelerlogin',data)
-        .then(res=>{
-            if(res.status===200){
-                this.setState({
-                    status:200
+        // axios.defaults.withCredentials = true;
+        // axios.post('http://localhost:3001/travelerlogin',data)
+        // .then(res=>{
+        //     if(res.status===200){
+        //         this.setState({
+        //             status:200
                     
-                })
+        //         })
                 
-            }
+        //     }
             
-        }).catch(res=>{
-            this.setState({
-                message:"Incorrect username or password"
-            })
-        })
-    }
+        // }).catch(res=>{
+        //     this.setState({
+        //         message:"Incorrect username or password"
+        //     })
+        // })
+    //}
+
+    onSubmit(values) {
+        console.log(values);
+        this.props.traveler_login(values,
+        )
+        
+      }
+
     render() {
-        var redirect=this.state.status===200?<Redirect to='/'/>:null;
+        const { handleSubmit } = this.props;
+        console.log("Current status",this.props.status);
+      var redirect=this.props.status==200?<Redirect to='/'/>:null;
+      var message=this.props.status==400?"Incorrect username or passoword":null;
         return (
             <div >
             {redirect}
@@ -97,20 +107,29 @@ setpassword(e){
     <div className="panel">
    <label>Account Login</label>
    </div>
-    <form id="Login" onSubmit={this.checklogin}>
+    <form id="Login" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 
-        <div className="form-group">
+    <Field
+        name="emailaddress"
+        type="email"
+        component={this.renderField}
+        id="inputEmail"
+        placeholder="Email address"
+        
+      />
 
+      <Field
+        name="password"
+        type="password"
+        component={this.renderField}
+        id="inputPassword"
+        placeholder="Password"
+        
+      />
 
-            <input type="email" className="form-control" id="inputEmail" placeholder="Email address" onChange={this.setemail} required/>
+        
 
-        </div>
-
-        <div className="form-group">
-
-            <input type="password" className="form-control" id="inputPassword" placeholder="Password" onChange={this.setpassword} required/>
-
-        </div>
+        
         <div className="forgot">
         <a href="">Forgot password?</a>
 </div>
@@ -119,7 +138,7 @@ setpassword(e){
         <br/>
     
         <br/>
-        <label style={{color:"red"}}>{this.state.message}</label>
+        <label style={{color:"red"}}>{message}</label>
         <br/>
         <div className="disclaimer">
         <label>We don't post anything without your permission</label>
@@ -137,5 +156,32 @@ setpassword(e){
                 );
             }
         }
+        function mapStateToProps(state) {
+            console.log("in map state",state);
+            return { status: state.traveler_login.status};
+          }
+
+        function validate(values) {
+
+            const errors = {};
+          
+            // Validate the inputs from 'values'
+            if (!values.emailaddress) {
+              errors.emailaddress = "Enter emailaddress";
+            }
+            if (!values.password) {
+              errors.password = "Enter Password";
+            }
+            
+          
+            // If errors is empty, the form is fine to submit
+            // If errors has *any* properties, redux form assumes form is invalid
+            return errors;
+          }
+          
         
-        export default Login;
+        export default reduxForm({
+  validate,
+  form: "NewBookForm"
+})(connect(mapStateToProps, {traveler_login })(Login));
+

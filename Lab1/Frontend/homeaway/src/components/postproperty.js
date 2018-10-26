@@ -92,9 +92,15 @@ this.setState({
         property.append("rate",formfields.rate);
         property.append("nights",formfields.nights);
         for(var i=0;i<formfields.photos.length;i++){
+            console.log(formfields.photos[i]);
             property.append("photos",formfields.photos[i],"test");
         }
         property.append('username',cookie.load('owner'));
+
+        console.log("Print formdata");
+        for (var pair of property.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        }
 
         axios.post('http://localhost:3001/postproperty',property)
         .then(res=>{

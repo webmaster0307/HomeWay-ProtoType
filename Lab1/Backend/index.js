@@ -101,6 +101,8 @@ app.post('/travelerlogin', function (req, res) {
 
     console.log("Inside Login Post Request");
     var emailaddress = req.body.emailaddress;
+    console.log(req.body.emailaddress);
+
     var password = req.body.password;
     var sql = "SELECT *  FROM traveler_login_data WHERE emailaddress = " +
         mysql.escape(emailaddress);
@@ -136,6 +138,7 @@ app.post('/travelerlogin', function (req, res) {
 
 
                     res.cookie('traveler', username, { maxAge: 9000000, httpOnly: false, path: '/' });
+                    console.log(res.cookie);
                     req.session.user = username;
                     console.log("Session",req.session.user);
                     res.writeHead(200, {
