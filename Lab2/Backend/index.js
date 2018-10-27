@@ -18,7 +18,7 @@ var uuidv4 = require('uuid/v4');
 var traveler = require('./models/traveler');
 var listing = require('./models/property');
 var booking = require('./models/booking');
-
+var kafka = require('./kafka/client');
 
 var jwt = require('jsonwebtoken');
 var maxSize=1000000*90;
@@ -130,115 +130,79 @@ app.post('/travelerlogin', function (req, res) {
     console.log(req.body.emailaddress);
 
     var password = req.body.password;
-    // var sql = "SELECT *  FROM traveler_login_data WHERE emailaddress = " +
-    //     mysql.escape(emailaddress);
+    
 
-    // pool.getConnection(function (err, con) {
-    //     if (err) {
-    //         res.writeHead(400, {
-    //             'Content-Type': 'text/plain'
-    //         })
-    //         res.end("Could Not Get Connection Object");
-    //     } else {
-    //         con.query(sql, function (err, result) {
-    //             console.log("req is", JSON.stringify(req.body));
-    //             console.log(result);
-    //             if (err || result.length == 0) {
-    //                 res.writeHead(400, {
-    //                     'Content-Type': 'text/plain'
-    //                 })
-    //                 res.end("Incorrect emailaddress");
-    //             } else {
-    //                 let temp = JSON.stringify(result[0]);
+    //Kafka request
 
-    //                 temp = JSON.parse(temp);
+    kafka.make_request('traveler_login',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
 
-    //                 let name = temp.firstname;
-    //                 let hash=temp.password;
-    //                 let username = temp.emailaddress;
-
-    //                 if(bcrypt.compareSync(password, hash)) {
-    //                     // Passwords match
-
-    //                     console.log(name);
+            res.end("Login Unsuccessfull");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify(results));
+            }
+        
+    });
 
 
-    //                 res.cookie('traveler', username, { maxAge: 9000000, httpOnly: false, path: '/' });
+
+
+
+    // traveler.findOne({ emailaddress: req.body.emailaddress ,UserType:"traveler"})
+
+    //     .then((user) => {
+    //         console.log("user data from db",user );
+    //         if (user) {
+    //             user.comparePassword(req.body.password, function(err, isMatch) {
+
+    //                 if (isMatch && !err) {
+    //                 res.cookie('traveler', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
+    //                 var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
+    //                     expiresIn: 10080 // in seconds
+    //                 });
+    //                 //response.status(200).json({success: true, token: 'JWT ' + token});
+    //                 console.log("token",token);
     //                 console.log(res.cookie);
-    //                 req.session.user = username;
-    //                 console.log("Session",req.session.user);
+    //                 req.session.user = user.emailaddress;
+    //                 console.log("Session", req.session.user);
     //                 res.writeHead(200, {
-    //                     'Content-Type': 'text/plain'
+    //                     'Content-Type': 'application/json'
     //                 })
+    //                 var auth={
+    //                     username:user.emailaddress,
+    //                 token:token
+    //                 }
 
-    //                 res.end("Successful Login");
-    //                    } else {
+    //                 res.end(JSON.stringify(auth));
+    //             }else {
+                    
     //                     res.writeHead(400, {
     //                         'Content-Type': 'text/plain'
     //                     })
-    
+
     //                     res.end("Login Unsuccessfull");
-    //                    }
-
                     
-
     //             }
-    //         });
-    //     }
-    // });
+    //             } );
+    //         } else{
+    //             res.writeHead(400, {
+    //                 'Content-Type': 'text/plain'
+    //             })
 
-    // var trav=new Traveler({
-    //     emailaddress:req.body.emailaddress
-    // })
-
-
-    // trav.save();
-
-
-    traveler.findOne({ emailaddress: req.body.emailaddress ,UserType:"traveler"})
-
-        .then((user) => {
-            console.log("user data from db",user );
-            if (user) {
-                user.comparePassword(req.body.password, function(err, isMatch) {
-
-                    if (isMatch && !err) {
-                    res.cookie('traveler', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
-                    var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
-                        expiresIn: 10080 // in seconds
-                    });
-                    //response.status(200).json({success: true, token: 'JWT ' + token});
-                    console.log("token",token);
-                    console.log(res.cookie);
-                    req.session.user = user.emailaddress;
-                    console.log("Session", req.session.user);
-                    res.writeHead(200, {
-                        'Content-Type': 'application/json'
-                    })
-                    var auth={
-                        username:user.emailaddress,
-                    token:token
-                    }
-
-                    res.end(JSON.stringify(auth));
-                }else {
-                    
-                        res.writeHead(400, {
-                            'Content-Type': 'text/plain'
-                        })
-
-                        res.end("Login Unsuccessfull");
-                    
-                }
-                } );
-            } else{
-                res.writeHead(400, {
-                    'Content-Type': 'text/plain'
-                })
-
-                res.end("Login Unsuccessfull");
-            }
-        })
+    //             res.end("Login Unsuccessfull");
+    //         }
+    //     })
 });
 
 
@@ -656,101 +620,74 @@ app.post('/ownerlogin', function (req, res) {
     var sql = "SELECT *  FROM owner_login_data WHERE emailaddress = " +
         mysql.escape(emailaddress);
 
-    // pool.getConnection(function (err, con) {
-    //     if (err) {
-    //         res.writeHead(400, {
-    //             'Content-Type': 'text/plain'
-    //         })
-    //         res.end("Could Not Get Connection Object");
-    //     } else {
-    //         con.query(sql, function (err, result) {
-    //             console.log("req is", JSON.stringify(req.body));
-    //             console.log(result);
-    //             if (err || result.length == 0) {
-    //                 res.writeHead(400, {
-    //                     'Content-Type': 'text/plain'
-    //                 })
-    //                 res.end("Incorrect emailaddress or password");
-    //             } else {
-    //                 let temp = JSON.stringify(result[0]);
-
-    //                 temp = JSON.parse(temp);
-
-    //                 let name = temp.firstname;
-    //                 let hash=temp.password;
-
-    //                 let username = temp.emailaddress;
-
-    //                 if(bcrypt.compareSync(password, hash)) {
-    //                 console.log(name);
 
 
-    //                 res.cookie('owner', username, { maxAge: 9000000, httpOnly: false, path: '/' });
-    //                 req.session.user = username;
-    //                 console.log("Session",req.session.user);
-    //                 res.writeHead(200, {
-    //                     'Content-Type': 'text/plain'
-    //                 })
+   // traveler.findOne({ emailaddress: req.body.emailaddress,UserType:"owner" })
 
-    //                 res.end("Successful Login");
+        // .then((user) => {
+        //     console.log("user data from db",user );
+        //     if (user) {
+        //         user.comparePassword(req.body.password, function(err, isMatch) {
 
-    //                 }else{
-    //                     res.writeHead(400, {
-    //                         'Content-Type': 'text/plain'
-    //                     })
-    
-    //                     res.end("Login Unsuccessfull");
-    //             }
+        //             if (isMatch && !err) {
+        //             res.cookie('owner', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
+        //             var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
+        //                 expiresIn: 10080 // in seconds
+        //             });
+        //             //response.status(200).json({success: true, token: 'JWT ' + token});
+        //             console.log(res.cookie);
+        //             req.session.user = user.emailaddress;
+        //             console.log("Session", req.session.user);
+        //             res.writeHead(200, {
+        //                 'Content-Type': 'application/json'
+        //             })
+        //             var auth={
+        //                 username:user.emailaddress,
+        //             token:token
+        //             }
 
-    //             }
-    //         });
-    //     }
-    // })
-
-
-    traveler.findOne({ emailaddress: req.body.emailaddress,UserType:"owner" })
-
-        .then((user) => {
-            console.log("user data from db",user );
-            if (user) {
-                user.comparePassword(req.body.password, function(err, isMatch) {
-
-                    if (isMatch && !err) {
-                    res.cookie('owner', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
-                    var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
-                        expiresIn: 10080 // in seconds
-                    });
-                    //response.status(200).json({success: true, token: 'JWT ' + token});
-                    console.log(res.cookie);
-                    req.session.user = user.emailaddress;
-                    console.log("Session", req.session.user);
-                    res.writeHead(200, {
-                        'Content-Type': 'application/json'
-                    })
-                    var auth={
-                        username:user.emailaddress,
-                    token:token
-                    }
-
-                    res.end(JSON.stringify(auth));
-                }else {
+        //             res.end(JSON.stringify(auth));
+        //         }else {
                     
-                        res.writeHead(400, {
-                            'Content-Type': 'text/plain'
-                        })
+        //                 res.writeHead(400, {
+        //                     'Content-Type': 'text/plain'
+        //                 })
 
-                        res.end("Login Unsuccessfull");
+        //                 res.end("Login Unsuccessfull");
                     
-                }
-                } );
-            } else{
-                res.writeHead(400, {
-                    'Content-Type': 'text/plain'
-                })
+        //         }
+        //         } );
+        //     } else{
+        //         res.writeHead(400, {
+        //             'Content-Type': 'text/plain'
+        //         })
 
-                res.end("Login Unsuccessfull");
+        //         res.end("Login Unsuccessfull");
+        //     }
+        // })
+
+
+
+    kafka.make_request('owner_login',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Login Unsuccessfull");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify(results));
             }
-        })
+        
+    });
 
 });
 
