@@ -214,93 +214,77 @@ app.get('/fetchproperties', function (req, res) {
     //console.log(req.body);
     //console.log(typeof(req.body.location));
 
-
+var obj={
+    start:req.query.start,
+    end:req.query.end,
+    accomodates:req.query.guests,
+    location:req.query.location
+}
 
     var sql = "SELECT * FROM property_details WHERE accomodates >= " +
         mysql.escape(req.query.guests) + " AND start <=" +
         mysql.escape(req.query.start) + " AND end >=" +
         mysql.escape(req.query.end) + "AND address LIKE " + mysql.escape("%" + req.query.location + "%"); //"'%San Carlos%'";
-    // pool.getConnection(function (err, con) {
-    //     if (err) {
-    //         res.writeHead(400, {
-    //             'Content-Type': 'text/plain'
-    //         })
-    //         res.end("Could Not Get Connection Object");
-    //     } else {
-    //         con.query(sql, function (err, result) {
-    //             console.log(sql);
+   
 
-    //             if (err) {
-    //                 res.writeHead(400, {
-    //                     'Content-Type': 'text/plain'
-    //                 })
-    //                 res.end("Error while retrieving Book Details");
-    //             } else {
-    //                 console.log("Properties", path.join(__dirname, '/properties'));
-    //                 let temp = JSON.stringify(result);
 
-    //                 temp = JSON.parse(temp);
-    //                 console.log(temp);
-    //                 var imgs = [];
-    //                 //console.log("temp",temp);
-    //                 for (var i = 0; i < temp.length; i++) {
+    // listing.find({accomodates:{$gte:req.query.guests},start:{$lte:req.query.start},end:{$gte:req.query.end},address: { $regex: '.*' + req.query.location + '.*' ,$options:'i'}})
+    // .then((doc)=>{
 
-                    //     if (temp[i].images != "") {
-                    //         let propimg = temp[i].images.split('*');
-                    //         propimg.pop();
-                    //         let filN = propimg[0];
-                    //         imgs.push(propimg);
-                    //         temp[i].imageName = filN;
-                    //     }
-                    // }
-    //                 console.log("d", temp);
-                    // res.writeHead(200, {
-                    //     'Content-Type': 'application/json'
-                    // })
-                    // res.end(JSON.stringify(temp));
-    //             }
-    //         });
+    //     let temp = JSON.stringify(doc);
+    //     temp=JSON.parse(temp);
+        
+    //     var imgs = [];
+    //     for (var i = 0; i < temp.length; i++) {
+
+    //         if (temp[i].fileNames != "") {
+    //             let propimg = temp[i].fileNames.split('*');
+    //             propimg.pop();
+    //             let filN = propimg[0];
+    //             imgs.push(propimg);
+    //             temp[i].imageName = filN;
+    //         }
     //     }
-//,address:{ $regex: '.*' + req.body.address + '.*'} 
+    //     console.log("ssd",temp);
+    //     res.writeHead(200, {
+    //         'Content-Type': 'application/json'
+    //     })
+    //     res.end(JSON.stringify(temp));
+    // }).catch((e)=>{
+    //     res.writeHead(400, {
+    //         'Content-Type': 'text/plain'
+    //     })
+    //     res.end("Error while fetching properties");
     // })
 
 
-    listing.find({accomodates:{$gte:req.query.guests},start:{$lte:req.query.start},end:{$gte:req.query.end},address: { $regex: '.*' + req.query.location + '.*' ,$options:'i'}})
-    .then((doc)=>{
+    kafka.make_request('search_properties',obj, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
 
-        let temp = JSON.stringify(doc);
-        temp=JSON.parse(temp);
-        
-        var imgs = [];
-        for (var i = 0; i < temp.length; i++) {
-
-            if (temp[i].fileNames != "") {
-                let propimg = temp[i].fileNames.split('*');
-                propimg.pop();
-                let filN = propimg[0];
-                imgs.push(propimg);
-                temp[i].imageName = filN;
+            res.end("Error while fetching properties");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify(results));
             }
-        }
-        console.log("ssd",temp);
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
-        res.end(JSON.stringify(temp));
-    }).catch((e)=>{
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
-        res.end("Error while fetching properties");
-    })
+        
+    });
+
 })
 
 
 
 
 //fetch properties for trips
-
-
 app.get('/mytrips', function(req,res){
     console.log("in fetch trips");
     console.log(req.query.username);
@@ -398,65 +382,94 @@ app.get('/mytrips', function(req,res){
 // }
     
 // })
-booking.find({traveler:username}).then((docs)=>{
-    console.log("bookings",docs);
-    let temp=JSON.stringify(docs);
-    temp=JSON.parse(temp);
-    if(temp.length!=0){
+// booking.find({traveler:username}).then((docs)=>{
+//     console.log("bookings",docs);
+//     let temp=JSON.stringify(docs);
+//     temp=JSON.parse(temp);
+//     if(temp.length!=0){
 
-        var ids=[];
+//         var ids=[];
 
-                    for(var i=0;i<temp.length;i++){
-                        ids.push(temp[i].property_id);
-                    }
-                    console.log("temp",temp);
+//                     for(var i=0;i<temp.length;i++){
+//                         ids.push(temp[i].property_id);
+//                     }
+//                     console.log("temp",temp);
         
-                    console.log('ids',ids);
+//                     console.log('ids',ids);
 
-                    listing.find({"_id":{$in:ids}})
-                    .then((props)=>{
-                        let temp1=JSON.stringify(props);
-                        temp1=JSON.parse(temp1);
-                       // console.log("Properties",temp1)
-                        for (var i = 0; i < temp.length; i++) {
-                            for (var j = 0; j < temp1.length; j++) {
-                                if (temp[i].property_id == temp1[j]._id) {
-                                    temp[i].headline = temp1[j].headline;
-                                    temp[i].guests = temp1[j].guests;
-                                    temp[i].currency = temp1[j].currency;
-                                    temp[i].rate = temp1[j].rate;
-                                    temp[i].imageName = temp1[j].fileNames.split('*')[1]
-                                    break;
-                                }
+//                     listing.find({"_id":{$in:ids}})
+//                     .then((props)=>{
+//                         let temp1=JSON.stringify(props);
+//                         temp1=JSON.parse(temp1);
+//                        // console.log("Properties",temp1)
+//                         for (var i = 0; i < temp.length; i++) {
+//                             for (var j = 0; j < temp1.length; j++) {
+//                                 if (temp[i].property_id == temp1[j]._id) {
+//                                     temp[i].headline = temp1[j].headline;
+//                                     temp[i].guests = temp1[j].guests;
+//                                     temp[i].currency = temp1[j].currency;
+//                                     temp[i].rate = temp1[j].rate;
+//                                     temp[i].imageName = temp1[j].fileNames.split('*')[1]
+//                                     break;
+//                                 }
 
-                            }
+//                             }
 
-                        }
-                        console.log("Final",temp);
+//                         }
+//                         console.log("Final",temp);
 
-                        res.writeHead(200, {
-                            'Content-Type': 'application/json'
-                        })
-                        res.end(JSON.stringify(temp));
+//                         res.writeHead(200, {
+//                             'Content-Type': 'application/json'
+//                         })
+//                         res.end(JSON.stringify(temp));
 
-                    }).catch((e)=>{
+//                     }).catch((e)=>{
                         
-                                                res.writeHead(400,{
-                                                    'Content-Type' : 'text/plain'
-                                                })
-                                                res.end("Error while retrieving Book Details");
-                    })
+//                                                 res.writeHead(400,{
+//                                                     'Content-Type' : 'text/plain'
+//                                                 })
+//                                                 res.end("Error while retrieving Book Details");
+//                     })
 
-    }
+//     }
 
 
-}).catch((error)=>{
-    res.writeHead(400,{
-        'Content-Type' : 'text/plain'
-    })
-    res.end("Error while retrieving Booking Details");
-})
+// }).catch((error)=>{
+//     res.writeHead(400,{
+//         'Content-Type' : 'text/plain'
+//     })
+//     res.end("Error while retrieving Booking Details");
+// })
 
+
+
+
+
+
+var obj={
+    username:username
+}
+
+kafka.make_request('my_trips',obj, function(err,results){
+    console.log('in result');
+    console.log(results);
+    if (err){
+        console.log("Inside err");
+        res.writeHead(400, {
+            'Content-Type': 'text/plain'
+        })
+
+        res.end("Error while fetching trips");
+    }else{
+        console.log("Inside else");
+        console.log("Results",results);
+        res.writeHead(200, {
+            'Content-Type': 'application/json'
+        })
+        res.end(JSON.stringify(results));
+        }
+    
+});
 
 })
 
@@ -472,38 +485,61 @@ app.get('/ownerproperties', function(req,res){
     console.log("in fetch owner properties");
     var owner=req.query.username;
 
-    
-    
     var sql = "SELECT * FROM property_details WHERE username = " +
     mysql.escape(owner);
-    listing.find({username:owner})
-    .then((doc)=>{
+    // listing.find({username:owner})
+    // .then((doc)=>{
 
-        let temp = JSON.stringify(doc);
-        temp=JSON.parse(temp);
+    //     let temp = JSON.stringify(doc);
+    //     temp=JSON.parse(temp);
         
-        var imgs = [];
-        for (var i = 0; i < temp.length; i++) {
+    //     var imgs = [];
+    //     for (var i = 0; i < temp.length; i++) {
 
-            if (temp[i].fileNames != "") {
-                let propimg = temp[i].fileNames.split('*');
-                propimg.pop();
-                let filN = propimg[0];
-                imgs.push(propimg);
-                temp[i].imageName = filN;
-            }
-        }
-        console.log("ssd",temp);
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
-        res.end(JSON.stringify(temp));
-    }).catch((e)=>{
+    //         if (temp[i].fileNames != "") {
+    //             let propimg = temp[i].fileNames.split('*');
+    //             propimg.pop();
+    //             let filN = propimg[0];
+    //             imgs.push(propimg);
+    //             temp[i].imageName = filN;
+    //         }
+    //     }
+    //     console.log("ssd",temp);
+    //     res.writeHead(200, {
+    //         'Content-Type': 'application/json'
+    //     })
+    //     res.end(JSON.stringify(temp));
+    // }).catch((e)=>{
+    //     res.writeHead(400, {
+    //         'Content-Type': 'text/plain'
+    //     })
+    //     res.end("Error while fetching properties");
+    // })
+
+
+var obj={
+    username:owner
+}
+kafka.make_request('my_properties',obj, function(err,results){
+    console.log('in result');
+    console.log(results);
+    if (err){
+        console.log("Inside err");
         res.writeHead(400, {
             'Content-Type': 'text/plain'
         })
-        res.end("Error while fetching properties");
-    })
+
+        res.end("Error while fetching trips");
+    }else{
+        console.log("Inside else");
+        console.log("Results",results);
+        res.writeHead(200, {
+            'Content-Type': 'application/json'
+        })
+        res.end(JSON.stringify(results));
+        }
+    
+});
 })
 
 
@@ -526,6 +562,10 @@ app.get('/getlisting', function(req,res){
     console.log("in get listing");
     console.log("cbcb",req.query.property_id);
     var id=req.query.property_id;
+
+    var obj={
+        id:id
+    }
     //console.log(typeof(req.body.location));
 
     
@@ -567,37 +607,58 @@ app.get('/getlisting', function(req,res){
 //     });
 // }
     
+// // })
+
+// listing.findById(id).then((doc)=>{
+//     console.log("Listing",doc);
+
+
+//     let temp = JSON.stringify(doc);
+
+//     temp = JSON.parse(temp);
+
+//     var images=temp.fileNames;
+// var finalim="";
+//     for(var i=0;i<images.length-1;i++){
+// finalim+=images[i];
+//     }
+// temp.images=finalim;
+//     res.writeHead(200,{
+//         'Content-Type' : 'application/json'
+//     })
+//     res.end(JSON.stringify(temp));
+
+
+// }).catch((e)=>{
+//     res.writeHead(400,{
+//         'Content-Type' : 'text/plain'
+//     })
+//     res.end("Error while retrieving Book Details");
 // })
 
-listing.findById(id).then((doc)=>{
-    console.log("Listing",doc);
-
-
-    let temp = JSON.stringify(doc);
-
-    temp = JSON.parse(temp);
-
-    var images=temp.fileNames;
-var finalim="";
-    for(var i=0;i<images.length-1;i++){
-finalim+=images[i];
-    }
-temp.images=finalim;
-    res.writeHead(200,{
-        'Content-Type' : 'application/json'
-    })
-    res.end(JSON.stringify(temp));
-
-
-}).catch((e)=>{
-    res.writeHead(400,{
-        'Content-Type' : 'text/plain'
-    })
-    res.end("Error while retrieving Book Details");
-})
 
 
 
+kafka.make_request('details_view',obj, function(err,results){
+    console.log('in result');
+    console.log(results);
+    if (err){
+        console.log("Inside err");
+        res.writeHead(400, {
+            'Content-Type': 'text/plain'
+        })
+
+        res.end("Login Unsuccessfull");
+    }else{
+        console.log("Inside else");
+        console.log("Results",results);
+        res.writeHead(200, {
+            'Content-Type': 'application/json'
+        })
+        res.end(JSON.stringify(results));
+        }
+    
+});
 
 
 })
@@ -702,7 +763,7 @@ app.post('/ownerlogin', function (req, res) {
 
 
 
-app.get('/gettravelerprofile', function (req, res) {
+app.get('/gettravelerprofile',function (req, res) {
 
     console.log("Inside Traveler Profile Get Request");
     var emailaddress=req.query.emailaddress;
@@ -762,42 +823,74 @@ app.get('/gettravelerprofile', function (req, res) {
     //         });
     //     }
     // });
+  var obj={
+      emailaddress:emailaddress
+  }
 
+    // traveler.findOne({emailaddress:emailaddress,UserType:"traveler"}).then((doc)=>{
+    //     console.log("Find",doc);
 
-    traveler.findOne({emailaddress:emailaddress,UserType:"traveler"}).then((doc)=>{
-        console.log("Find",doc);
-
-        var data={
-                              firstname :doc.firstName,
-                               lastname :doc.lastName,
-                                aboutme:doc.aboutme,
-                                citycountry:doc.citycountry,
-                                company:doc.company,
-                                school:doc.school,
-               hometown:doc.hometown,
-               languages:doc.languages,
-               gender:doc.gender,
+    //     var data={
+    //                           firstname :doc.firstName,
+    //                            lastname :doc.lastName,
+    //                             aboutme:doc.aboutme,
+    //                             citycountry:doc.citycountry,
+    //                             company:doc.company,
+    //                             school:doc.school,
+    //            hometown:doc.hometown,
+    //            languages:doc.languages,
+    //            gender:doc.gender,
               
                                 
-                            }
+    //                         }
                             
-                            if(doc.profile_image!=""){
-                                              data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',doc.profile_image))).toString('base64');
-                                               }
+    //                         if(doc.profile_image!=""){
+    //                                           data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',doc.profile_image))).toString('base64');
+    //                                            }
 
                                                
-                                                res.writeHead(200, {
-                                                    'Content-Type': 'application/json'
-                               })
-                               res.end(JSON.stringify(data));
+    //                                             res.writeHead(200, {
+    //                                                 'Content-Type': 'application/json'
+    //                            })
+    //                            res.end(JSON.stringify(data));
 
-    }).catch((e)=>{
-        console.log("in catch");
-        res.writeHead(400, {
-                            'Content-Type': 'text/plain'
-                         })
-                             res.end("Incorrect emailaddress");
-    })
+    // }).catch((e)=>{
+    //     console.log("in catch");
+    //     res.writeHead(400, {
+    //                         'Content-Type': 'text/plain'
+    //                      })
+    //                          res.end("Incorrect emailaddress");
+    // })
+
+
+
+    kafka.make_request('get_traveler_profile',obj, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Login Unsuccessfull");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            if(results.image_find!=""){
+            var image=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',results.image_find))).toString('base64');
+            results.photo=image;
+            }
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify(results));
+            }
+        
+    });
+
+
+
 
 });
 
@@ -818,37 +911,65 @@ app.get('/getownerprofile', function (req, res) {
     const testFolder = path.join(__dirname, '/uploads');
 
 
-    traveler.findOne({ emailaddress: emailaddress, UserType: "owner" }).then((doc) => {
-        console.log("Find", doc);
+    // traveler.findOne({ emailaddress: emailaddress, UserType: "owner" }).then((doc) => {
+    //     console.log("Find", doc);
 
-        var data = {
-            firstname: doc.firstName,
-            lastname: doc.lastName,
-            aboutme: doc.aboutme,
-            citycountry: doc.citycountry,
-            company: doc.company,
-            school: doc.school,
-            hometown: doc.hometown,
-            languages: doc.languages,
-            gender: doc.gender,
+    //     var data = {
+    //         firstname: doc.firstName,
+    //         lastname: doc.lastName,
+    //         aboutme: doc.aboutme,
+    //         citycountry: doc.citycountry,
+    //         company: doc.company,
+    //         school: doc.school,
+    //         hometown: doc.hometown,
+    //         languages: doc.languages,
+    //         gender: doc.gender,
 
 
-        }
+    //     }
 
-        if (doc.profile_image) {
-            data.photo = new Buffer(fs.readFileSync(path.join(__dirname + '/uploads', doc.profile_image))).toString('base64');
-        }
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
-        res.end(JSON.stringify(data));
+    //     if (doc.profile_image) {
+    //         data.photo = new Buffer(fs.readFileSync(path.join(__dirname + '/uploads', doc.profile_image))).toString('base64');
+    //     }
+    //     res.writeHead(200, {
+    //         'Content-Type': 'application/json'
+    //     })
+    //     res.end(JSON.stringify(data));
 
-    }).catch((e) => {
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
-        res.end("Incorrect emailaddress");
-    })
+    // }).catch((e) => {
+    //     res.writeHead(400, {
+    //         'Content-Type': 'text/plain'
+    //     })
+    //     res.end("Incorrect emailaddress");
+    // })
+    var obj={
+        emailaddress:emailaddress
+    }
+
+    kafka.make_request('get_owner_profile',obj, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Login Unsuccessfull");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            if(results.image_find!=""){
+            var image=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',results.image_find))).toString('base64');
+            results.photo=image;
+            }
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify(results));
+            }
+        
+    });
 
 
 });
@@ -874,53 +995,74 @@ console.log("Res : ",req.file);
 console.log("Res 1: ",req.body);
 
 if(req.file==undefined){
-    // var sql = "UPDATE traveler_login_data SET firstname = " +
-    // mysql.escape(req.body.firstname) + " ,lastname=" +
-    // mysql.escape(req.body.lastname) + ",aboutme=" + 
-    // mysql.escape(req.body.aboutme) + " ,citycountry=" + 
-    // mysql.escape(req.body.citycountry) + " ,company=" + 
-    // mysql.escape(req.body.company) + ",school=" + 
-    // mysql.escape(req.body.school) + ",hometown=" + 
-    // mysql.escape(req.body.hometown) + ",languages=" + 
-    // mysql.escape(req.body.languages) + ",gender=" + 
-    // mysql.escape(req.body.gender) +   
-    // " WHERE emailaddress = " +
-    // mysql.escape(req.body.username);
+    
 
-    traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"traveler"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,company:req.body.company,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender}},{new:true})
-    .then((doc)=>{
-        console.log("update doc",doc);
-        res.writeHead(200, {
-            'Content-Type': 'text/plain'
-        })
-        res.end('User successfully added');
-    }).catch((e)=>{
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
+   req.body.profile_image="";
 
-        res.end("Error");
-    })
+    kafka.make_request('add_traveler_profile',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Login Unsuccessfull");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            })
+            res.end('User successfully added');
+            }
+        
+    });
 
 
 
 }else{
     var profile_image=req.file.filename;
    
-
-        traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"traveler"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,country:req.body.country,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender,profile_image:profile_image}},{new:true})
-        .then((doc)=>{
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            })
-            res.end('User successfully added');
-        }).catch((e)=>{
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+    req.body.profile_image=profile_image;
+        // traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"traveler"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,country:req.body.country,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender,profile_image:profile_image}},{new:true})
+        // .then((doc)=>{
+        //     res.writeHead(200, {
+        //         'Content-Type': 'text/plain'
+        //     })
+        //     res.end('User successfully added');
+        // }).catch((e)=>{
+        //     res.writeHead(400, {
+        //         'Content-Type': 'text/plain'
+        //     })
     
-            res.end("Error");
-        })
+        //     res.end("Error");
+        // })
+
+
+        kafka.make_request('add_traveler_profile',req.body, function(err,results){
+            console.log('in result');
+            console.log(results);
+            if (err){
+                console.log("Inside err");
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("Login Unsuccessfull");
+            }else{
+                console.log("Inside else");
+                console.log("Results",results);
+                
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain'
+                })
+                res.end('User successfully added');
+                }
+            
+        });
+
 
 
 }
@@ -937,42 +1079,91 @@ if(req.file==undefined){
 app.post('/addprofileowner',upload.single('photo'), function (req, res) {
     
    
-    console.log("Inside Owner Profile Request Handler");
+console.log("Inside Owner Profile Request Handler");
 //console.log(JSON.stringify(req.body));
 console.log("Res : ",res.file);
 console.log("Res 1: ",req.body);
 if(req.file==undefined){
-    traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"owner"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,company:req.body.company,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender}},{new:true})
-    .then((doc)=>{
-        console.log("update doc",doc);
-        res.writeHead(200, {
-            'Content-Type': 'text/plain'
-        })
-        res.end('User successfully added');
-    }).catch((e)=>{
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
+    // traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"owner"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,company:req.body.company,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender}},{new:true})
+    // .then((doc)=>{
+    //     console.log("update doc",doc);
+    //     res.writeHead(200, {
+    //         'Content-Type': 'text/plain'
+    //     })
+    //     res.end('User successfully added');
+    // }).catch((e)=>{
+    //     res.writeHead(400, {
+    //         'Content-Type': 'text/plain'
+    //     })
 
-        res.end("Error");
-    })
-}else{
-    var profile_image=req.file.filename;
-   
+    //     res.end("Error");
+    // })
 
-        traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"owner"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,country:req.body.country,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender,profile_image:profile_image}},{new:true})
-        .then((doc)=>{
+
+    req.body.profile_image="";
+
+    kafka.make_request('add_owner_profile',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Login Unsuccessfull");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
             res.writeHead(200, {
                 'Content-Type': 'text/plain'
             })
             res.end('User successfully added');
-        }).catch((e)=>{
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+            }
+        
+    });
+
+}else{
+    var profile_image=req.file.filename;
+    req.body.profile_image=profile_image;
+
+        // traveler.findOneAndUpdate({emailaddress:req.body.username,UserType:"owner"},{$set:{firstName:req.body.firstname,lastName:req.body.lastname,aboutme:req.body.aboutme,citycountry:req.body.citycountry,country:req.body.country,school:req.body.school,hometown:req.body.hometown,languages:req.body.languages,gender:req.body.gender,profile_image:profile_image}},{new:true})
+        // .then((doc)=>{
+        //     res.writeHead(200, {
+        //         'Content-Type': 'text/plain'
+        //     })
+        //     res.end('User successfully added');
+        // }).catch((e)=>{
+        //     res.writeHead(400, {
+        //         'Content-Type': 'text/plain'
+        //     })
     
-            res.end("Error");
-        })
+        //     res.end("Error");
+        // })
+
+
+        kafka.make_request('add_owner_profile',req.body, function(err,results){
+            console.log('in result');
+            console.log(results);
+            if (err){
+                console.log("Inside err");
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("Login Unsuccessfull");
+            }else{
+                console.log("Inside else");
+                console.log("Results",results);
+                
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain'
+                })
+                res.end('User successfully added');
+                }
+            
+        });
+
 }
 
 
@@ -994,6 +1185,8 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
     console.log(JSON.stringify(req.body));
     console.log("Bedrooms",req.body.bedrooms);
     var emailaddress = req.body.username;
+    console.log("emailadd",req.body.username);
+
     console.log(req.body.photos);
     console.log("File saved as ", req.files);
     var fileNames="";
@@ -1011,42 +1204,68 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
         mysql.escape(req.body.publicinfo) + ", " + mysql.escape(req.body.propertytype) + " , " + mysql.escape(req.body.bedrooms) + ", " + mysql.escape(req.body.accomodates) + ", " + mysql.escape(req.body.bathrooms) + ", " + mysql.escape(req.body.start) + ", " + mysql.escape(req.body.end) + ", " + mysql.escape(req.body.currency) + ", " + mysql.escape(req.body.rate) + ", " + mysql.escape(req.body.nights) + ", " + mysql.escape(req.body.username) + ", " + mysql.escape(fileNames) + ") ";
 
 
-        let start=new Date(req.body.start);
-        let end=new Date(req.body.end);
+        // let start=new Date(req.body.start);
+        // let end=new Date(req.body.end);
 
         
-        let accomodates=Number(req.body.accomodates);
+        // let accomodates=Number(req.body.accomodates);
        
-        var prop=new listing({
+        // var prop=new listing({
            
-            address:req.body.address,
-            headline:req.body.headline,
-            publicinfo:req.body.publicinfo,
-            propertytype:req.body.propertytype,
-            bedrooms:req.body.bedrooms,
-            accomodates:accomodates,
-           bathrooms:req.body.bathrooms,
-            start:start,
-            end:end,
-            currency:req.body.currency,
-            rate:req.body.rate,
-            nights:req.body.nights,
-            username:req.body.username,
-            fileNames:fileNames
+        //     address:req.body.address,
+        //     headline:req.body.headline,
+        //     publicinfo:req.body.publicinfo,
+        //     propertytype:req.body.propertytype,
+        //     bedrooms:req.body.bedrooms,
+        //     accomodates:accomodates,
+        //    bathrooms:req.body.bathrooms,
+        //     start:start,
+        //     end:end,
+        //     currency:req.body.currency,
+        //     rate:req.body.rate,
+        //     nights:req.body.nights,
+        //     username:req.body.username,
+        //     fileNames:fileNames
 
-        })
+        // })
     
-        prop.save().then((doc)=>{
-            console.log("Prop",doc);
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'})
-                 res.end('User successfully added');
-        },(e)=>{
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'})
-                res.end("Unabele to save property");
-        })
+        // prop.save().then((doc)=>{
+        //     console.log("Prop",doc);
+        //     res.writeHead(200, {
+        //         'Content-Type': 'text/plain'})
+        //          res.end('User successfully added');
+        // },(e)=>{
+        //     res.writeHead(400, {
+        //         'Content-Type': 'text/plain'})
+        //         res.end("Unabele to save property");
+        // })
      // })
+
+     req.body.fileNames=fileNames;
+     kafka.make_request('post_property',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Unable to save property");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            })
+            res.end('Property added successfully');
+            }
+        
+    });
+
+
+
     })
 
 
@@ -1112,48 +1331,71 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
     
             //     }
             // });
-            traveler.find({emailaddress:emailaddress,"UserType":"traveler"}).then((doc)=>{
-                console.log(doc);
-                if(doc.length!=0){
-                    res.writeHead(400, {
-                        'Content-Type': 'text/plain'})
-                        res.end("User already exists");
-                }else{
-                    var trav=new traveler({
-                        UserType:'traveler',
-                        firstName:req.body.firstName,
-                        lastName:req.body.lastName,
-                        emailaddress:req.body.emailaddress,
-                        password:req.body.password,
-                        aboutme:"",
-                        citycountry:"",
-                        company:"",
-                        school:"",
-                        hometown:"",
-                        languages:"",
-                        gender:"",
-                        profile_image:""
+            // traveler.find({emailaddress:emailaddress,"UserType":"traveler"}).then((doc)=>{
+            //     console.log(doc);
+            //     if(doc.length!=0){
+            //         res.writeHead(400, {
+            //             'Content-Type': 'text/plain'})
+            //             res.end("User already exists");
+            //     }else{
+            //         var trav=new traveler({
+            //             UserType:'traveler',
+            //             firstName:req.body.firstName,
+            //             lastName:req.body.lastName,
+            //             emailaddress:req.body.emailaddress,
+            //             password:req.body.password,
+            //             aboutme:"",
+            //             citycountry:"",
+            //             company:"",
+            //             school:"",
+            //             hometown:"",
+            //             languages:"",
+            //             gender:"",
+            //             profile_image:""
         
-                    })
+            //         })
                 
-                    trav.save().then((doc)=>{
-                        res.writeHead(200, {
-                            'Content-Type': 'text/plain'})
-                             res.end('User successfully added');
-                    },(e)=>{
-                        res.writeHead(400, {
-                            'Content-Type': 'text/plain'})
-                            res.end("User already exists");
-                    })
-                }
+            //         trav.save().then((doc)=>{
+            //             res.writeHead(200, {
+            //                 'Content-Type': 'text/plain'})
+            //                  res.end('User successfully added');
+            //         },(e)=>{
+            //             res.writeHead(400, {
+            //                 'Content-Type': 'text/plain'})
+            //                 res.end("User already exists");
+            //         })
+            //     }
                 
-            }).catch((e)=>{
-                res.writeHead(400, {
-                    'Content-Type': 'text/plain'})
-                    res.end("User already exists");
-             // })
-            })
+            // }).catch((e)=>{
+            //     res.writeHead(400, {
+            //         'Content-Type': 'text/plain'})
+            //         res.end("User already exists");
+            //  // })
+            // })
 
+
+
+        kafka.make_request('traveler_sign_up',req.body, function(err,results){
+            console.log('in result');
+            console.log(results);
+            if (err){
+                console.log("Inside err");
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("User already exists");
+            }else{
+                console.log("Inside else");
+                console.log("Results",results);
+                
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain'
+                })
+                res.end('User successfully added');
+                }
+            
+        });
         
        
     });
@@ -1221,35 +1463,57 @@ app.post('/ownersignup', function (req, res) {
 
         //     }
         // });
-        var trav=new traveler({
-            UserType:'owner',
-            firstName:req.body.firstName,
-            lastName:req.body.lastName,
-            emailaddress:req.body.emailaddress,
-            password:req.body.password,
-            aboutme:"",
-            citycountry:"",
-            company:"",
-            school:"",
-            hometown:"",
-            languages:"",
-            gender:"",
-            profile_image:""
+        // var trav=new traveler({
+        //     UserType:'owner',
+        //     firstName:req.body.firstName,
+        //     lastName:req.body.lastName,
+        //     emailaddress:req.body.emailaddress,
+        //     password:req.body.password,
+        //     aboutme:"",
+        //     citycountry:"",
+        //     company:"",
+        //     school:"",
+        //     hometown:"",
+        //     languages:"",
+        //     gender:"",
+        //     profile_image:""
 
-        })
+        // })
     
-        trav.save().then((doc)=>{
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'})
-                 res.end('User successfully added');
-        },(e)=>{
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'})
-                res.end("Error");
-        })
+        // trav.save().then((doc)=>{
+        //     res.writeHead(200, {
+        //         'Content-Type': 'text/plain'})
+        //          res.end('User successfully added');
+        // },(e)=>{
+        //     res.writeHead(400, {
+        //         'Content-Type': 'text/plain'})
+        //         res.end("Error");
+        // })
     
 
       //});
+
+      kafka.make_request('owner_sign_up',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("User already exists");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            })
+            res.end('User successfully added');
+            }
+        
+    });
     
    
 });
@@ -1262,11 +1526,11 @@ app.post('/ownersignup', function (req, res) {
         var emailaddress = req.body.username;
         console.log(req.body.property_id);
         var available= "select * from property_details where property_id= " + mysql.escape(req.body.property_id);
-        var str = "select * from booking where property_id= " + mysql.escape(req.body.property_id);
-        var sql = "INSERT INTO booking VALUES ( " +
-            mysql.escape(null) + " ," +
-            mysql.escape(req.body.property_id) + " , " + mysql.escape(req.body.start) + " , " +
-            mysql.escape(req.body.end) + ", " + mysql.escape(req.body.guests) + " , " + mysql.escape(req.body.username) + ") ";
+        // var str = "select * from booking where property_id= " + mysql.escape(req.body.property_id);
+        // var sql = "INSERT INTO booking VALUES ( " +
+        //     mysql.escape(null) + " ," +
+        //     mysql.escape(req.body.property_id) + " , " + mysql.escape(req.body.start) + " , " +
+        //     mysql.escape(req.body.end) + ", " + mysql.escape(req.body.guests) + " , " + mysql.escape(req.body.username) + ") ";
 
         console.log("Data to book",req.body);
 
@@ -1377,78 +1641,110 @@ app.post('/ownersignup', function (req, res) {
 //         };
 //     })
 
-      var booking_start=new Date(req.body.start);
-      var booking_end=new Date(req.body.end);
-      var prop_start=new Date(req.body.prop_start);
-      var prop_end=new Date(req.body.prop_end);
 
-      console.log(booking_start);
-      if((booking_start < req.body.prop_start )|| (booking_end > req.body.prop_end)){
-        res.writeHead(202, {
-            'Content-Type': 'text/plain'
-        })
-        res.end("Booking Collision");
-      }else{
-          console.log("else");
-          var id=req.body.property_id;
-          booking.find({property_id:id}).then((docs)=>{
-              let temp=JSON.stringify(docs);
-              temp=JSON.parse(temp);
-              console.log("temp",temp);
-              if(temp.length!=0){
-              for(var i=0;i<temp.length;i++){
-                let tempStartDate = new Date(temp[i].start);
-                let tempEndDate=new Date(temp[i].end);
-                console.log(typeof(tempStartDate));
-                if((booking_start >= tempStartDate && booking_end <= tempEndDate)||(booking_start <= tempStartDate && booking_end <= tempEndDate && booking_end>=tempStartDate)||(booking_start >= tempStartDate && booking_end >= tempEndDate && booking_start<=tempEndDate)){
-                    res.writeHead(201, {
-                        'Content-Type': 'text/plain'
-                    })
-                    res.end("Booking Collision");
-                    break;
-                }
-                else{
-                    var book=new booking({
-                        property_id:req.body.property_id,
-                        start:booking_start,
-                        end:booking_end,
-                        owner:req.body.username,
-                        traveler:req.body.traveler,
+    //   var booking_start=new Date(req.body.start);
+    //   var booking_end=new Date(req.body.end);
+    //   var prop_start=new Date(req.body.prop_start);
+    //   var prop_end=new Date(req.body.prop_end);
+
+    //   console.log(booking_start);
+    //   if((booking_start < req.body.prop_start )|| (booking_end > req.body.prop_end)){
+    //     res.writeHead(202, {
+    //         'Content-Type': 'text/plain'
+    //     })
+    //     res.end("Booking Collision");
+    //   }else{
+    //       console.log("else");
+    //       var id=req.body.property_id;
+    //       booking.find({property_id:id}).then((docs)=>{
+    //           let temp=JSON.stringify(docs);
+    //           temp=JSON.parse(temp);
+    //           console.log("temp",temp);
+    //           if(temp.length!=0){
+    //           for(var i=0;i<temp.length;i++){
+    //             let tempStartDate = new Date(temp[i].start);
+    //             let tempEndDate=new Date(temp[i].end);
+    //             console.log(typeof(tempStartDate));
+    //             if((booking_start >= tempStartDate && booking_end <= tempEndDate)||(booking_start <= tempStartDate && booking_end <= tempEndDate && booking_end>=tempStartDate)||(booking_start >= tempStartDate && booking_end >= tempEndDate && booking_start<=tempEndDate)){
+    //                 res.writeHead(201, {
+    //                     'Content-Type': 'text/plain'
+    //                 })
+    //                 res.end("Booking Collision");
+    //                 break;
+    //             }
+    //             else{
+    //                 var book=new booking({
+    //                     property_id:req.body.property_id,
+    //                     start:booking_start,
+    //                     end:booking_end,
+    //                     owner:req.body.username,
+    //                     traveler:req.body.traveler,
                         
 
-                    })
+    //                 })
 
-                    book.save().then((doc)=>{
-                        console.log("df",doc);
-                        res.writeHead(200, {
-                            'Content-Type': 'text/plain'
-                        })
-                        res.end('Booking successfully completed');
+    //                 book.save().then((doc)=>{
+    //                     console.log("df",doc);
+    //                     res.writeHead(200, {
+    //                         'Content-Type': 'text/plain'
+    //                     })
+    //                     res.end('Booking successfully completed');
 
-                    })
-                }}
-              }else{
-                var bo=new booking({
-                    property_id:req.body.property_id,
-                    start:booking_start,
-                    end:booking_end,
-                    owner:req.body.username,
-                    traveler:req.body.traveler
+    //                 })
+    //             }}
+    //           }else{
+    //             var bo=new booking({
+    //                 property_id:req.body.property_id,
+    //                 start:booking_start,
+    //                 end:booking_end,
+    //                 owner:req.body.username,
+    //                 traveler:req.body.traveler
 
+    //             })
+
+    //             bo.save().then((doc)=>{
+    //                 console.log("df",doc);
+    //                 res.writeHead(200, {
+    //                     'Content-Type': 'text/plain'
+    //                 })
+    //                 res.end('Booking successfully completed');
+
+    //             })
+    //           }
+
+    //       })
+    //   }
+
+
+
+      kafka.make_request('book_property',req.body, function(err,results){
+        console.log('in result');
+        console.log(results);
+        if (err){
+            console.log("Inside err");
+            res.writeHead(400, {
+                'Content-Type': 'text/plain'
+            })
+
+            res.end("Unable to book this property");
+        }else{
+            if(results.length==0){
+                res.writeHead(201, {
+                    'Content-Type': 'text/plain'
                 })
-
-                bo.save().then((doc)=>{
-                    console.log("df",doc);
-                    res.writeHead(200, {
-                        'Content-Type': 'text/plain'
-                    })
-                    res.end('Booking successfully completed');
-
+                res.end("Booking Collision");
+            }else{
+                console.log("Inside else");
+                console.log("Results",results);
+                res.writeHead(200, {
+                    'Content-Type': 'application/json'
                 })
-              }
-
-          })
-      }
+                res.end(JSON.stringify(results));
+            }
+            
+            }
+        
+    });
 
     });
     
@@ -1462,126 +1758,79 @@ app.get('/getpropertytravelers', function (req, res) {
     
     var str = "select username from booking where property_id= " + mysql.escape(property_id);
     
-    // pool.getConnection(function (err, con) {
-    //     if (err) {
-    //         res.writeHead(400, {
+// booking.find({property_id:property_id}).then((docs)=>{
+//     console.log("bookings",docs)
+// if(docs.length==0){
+//     res.writeHead(201, {
+//         'Content-Type': 'text/plain'
+//     })
+//     res.end("Invalid property");
+// }else{
+//     let temp=JSON.stringify(docs);
+//     temp=JSON.parse(temp);
+//     var emailaddress=[];
+//     for (var i=0; i<temp.length;i++){
+//         emailaddress.push(temp[i].traveler);
+//     }
+//     traveler.find({"emailaddress":{$in:emailaddress},UserType:"traveler"}).select('-password')
+//     .then((travelers)=>{
 
-    //             'Content-Type': 'text/plain'
-    //         })
-
-    //         res.end("Could Not Get Connection Object");
-    //         console.log("got1");
-    //     }
-    //     else {
-
-    //         con.query(str, function (err, result) {
-    //             if (err || result.length ===0) {
-
-                    // res.writeHead(201, {
-                    //     'Content-Type': 'text/plain'
-                    // })
-                    // res.end("Invalid property");
-
-    //             } else {
-    //                 let temp=JSON.stringify(result);
-    //                 temp=JSON.parse(temp);
-    //                 var emailaddress=[];
-    //                 for(var i=0;i<temp.length;i++){
-    //                     emailaddress.push(temp[i].username);
-    //                 }
-    //                 var sql = "SELECT firstname,lastname,emailaddress,gender,citycountry,hometown,company,profile_image,aboutme,languages  FROM traveler_login_data WHERE emailaddress IN (" +
-    // mysql.escape(emailaddress) + ")";
-    //                 con.query(sql, function (err, result) {
-                            
-    //                     if (err) {
-    //                         console.log("got");
-    //                         res.writeHead(400, {
-    //                             'Content-Type': 'text/plain'
-    //                         })
-
-    //                         res.end("Error");
-    //                     } else {
-    //                         console.log("else");
-
-                            // let temp1=JSON.stringify(result)
-                            // temp1=JSON.parse(temp1);
-                            // // let files=[]
-                            // // for(var i=0;i<temp.length;i++){
-                            // //     files.push(md5(temp[i].username));
-                            // // }
-                            // // const testFolder = path.join(__dirname,'/uploads');
-                            
-                            
-                            // // var fileName="";
-                            // // let tot_files=[];
-                              
-                    
-                            // // fs.readdir(testFolder, (err, files) => {
-                            // //     files.forEach(file => {
-                            // //         tot_files.push(file);
-                    
-                            // //       })
-                            // //     })
-                                  
-                            // // for(var i=0;i<files.length;i++){
-                                
-                            // // }
-        
-              
-                            
-                            // res.writeHead(200, {
-                            //     'Content-Type': 'application/json'
-                            // })
-        
-                            // res.end(JSON.stringify(temp1));
-    //                     }
-    //                 });
-    //             }
-    //         });
-
-    //     }
-    // });
-
-
-booking.find({property_id:property_id}).then((docs)=>{
-    console.log("bookings",docs)
-if(docs.length==0){
-    res.writeHead(201, {
-        'Content-Type': 'text/plain'
-    })
-    res.end("Invalid property");
-}else{
-    let temp=JSON.stringify(docs);
-    temp=JSON.parse(temp);
-    var emailaddress=[];
-    for (var i=0; i<temp.length;i++){
-        emailaddress.push(temp[i].traveler);
-    }
-    traveler.find({"emailaddress":{$in:emailaddress},UserType:"traveler"}).select('-password')
-    .then((travelers)=>{
-
-console.log(travelers);
-        let temp1=JSON.stringify(travelers)
-        temp1=JSON.parse(temp1);
+// console.log(travelers);
+//         let temp1=JSON.stringify(travelers)
+//         temp1=JSON.parse(temp1);
        
 
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
 
-        res.end(JSON.stringify(temp1));
+//         res.end(JSON.stringify(temp1));
 
 
         
-    })
-}
-}).catch((e)=>{
-    res.writeHead(400, {
-        'Content-Type': 'text/plain'
-    })
+//     })
+// }
+// }).catch((e)=>{
+//     res.writeHead(400, {
+//         'Content-Type': 'text/plain'
+//     })
 
-    res.end("Error");
-})
+//     res.end("Error");
+// })
+
+
+obj={
+    property_id:property_id
+}
+kafka.make_request('property_travelers',obj, function(err,results){
+    console.log('in result');
+    console.log(results);
+    if (err){
+        console.log("Inside err");
+        res.writeHead(400, {
+            'Content-Type': 'text/plain'
+        })
+
+        res.end("Unable to find travelers");
+    }else{
+        if(results.length==0){
+            res.writeHead(201, {
+                'Content-Type': 'text/plain'
+            })
+            res.end("Invalid property");
+        }else{
+            console.log("Inside else");
+            console.log("Results",results);
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify(results));
+        }
+        
+        }
+    
+});
+
 
 });
 

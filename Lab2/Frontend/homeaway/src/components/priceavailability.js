@@ -9,7 +9,7 @@ import '../../src/CSS/postproperty.css';
 import '../../src/CSS/rates.css';
 import cookie from 'react-cookies'
 import '../../src/CSS/bootstrap-social.css';
-
+import jwt from 'jsonwebtoken';
 // var st = "", en = "", curr = null, rt = 0, nght = 0;
 class PriceAndAvailability extends Component {
     constructor() {
@@ -71,7 +71,7 @@ class PriceAndAvailability extends Component {
         console.log("In next Step");
         e.preventDefault();
         
-
+        var token=jwt.decode(localStorage.getItem('jwtToken'))
         let property= new FormData();
         property.append("address",this.state.address);
         property.append("headline",this.state.headline);
@@ -89,7 +89,7 @@ class PriceAndAvailability extends Component {
             console.log(this.props.photos[i]);
             property.append("photos",this.props.photos[i],"test");
         }
-        property.append('username',cookie.load('owner'));
+        property.append('username',token.emailaddress);
 
         console.log("Files state",this.state.photos);
         console.log("Print formdata");

@@ -5,6 +5,7 @@ import Logo from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
 import Profile from './profile';
 import cookie from 'react-cookies';
+import jwt from 'jsonwebtoken';
 
 
 
@@ -12,9 +13,9 @@ class Dashboard extends Component {
     render() {
         let navTop=null;
 
+        let token=jwt.decode(localStorage.getItem('jwtToken'))
         
-        
-        if(cookie.load('traveler')){
+        if(token.UserType=="traveler"){
             console.log("Able to read cookie");
             
             navTop = (
@@ -32,7 +33,7 @@ class Dashboard extends Component {
             );
         }
         
-        if(cookie.load('owner')){
+        if(token.UserType=="owner"){
             console.log("Able to read cookie");
             
             navTop = (

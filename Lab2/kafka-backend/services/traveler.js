@@ -43,6 +43,7 @@ function handle_request(msg, callback){
                     // res.writeHead(200, {
                     //     'Content-Type': 'application/json'
                     // })
+                   
                     var result={
                         username:user.emailaddress,
                     token:token
@@ -58,6 +59,7 @@ function handle_request(msg, callback){
             } else{
                 callback(null,"Error");
             }
+            
         })
 
 

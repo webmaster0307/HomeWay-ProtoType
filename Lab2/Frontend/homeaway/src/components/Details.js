@@ -169,8 +169,9 @@ end:this.state.end,
 guests:this.state.guests
 
       }
-      if(this.props.status===200 && this.props.properties!==null){
-         details =this.props.properties.map(property => {
+      let filteredProperties=this.props.properties;
+      if(this.props.status===200 && filteredProperties!==null){
+         details =filteredProperties.map(property => {
             return(
                 <Listing key={property._id} data={property} search={search}/>
             )
@@ -183,6 +184,8 @@ guests:this.state.guests
       {this.state.message}
       {details}
       <h3>{dataavailable}</h3>
+      
+      
       
       </div>
   );
