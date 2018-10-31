@@ -27,7 +27,7 @@ class Dashboard extends Component {
                 <Link className="nav-link" to="/dashboard/profile">Profile</Link>
             </li>
             <li id="it2" className="nav-item">
-                <a className="nav-link" href="#">Account</a>
+                <Link className="nav-link" to="/dashboard/travelerinbox">Inbox</Link>
             </li>
             </ul>
             );
@@ -45,7 +45,7 @@ class Dashboard extends Component {
                 <Link className="nav-link" to="/dashboard/profile">Profile</Link>
             </li>
             <li id="it2" className="nav-item">
-                <a className="nav-link" href="#">Account</a>
+                <Link className="nav-link" to="/dashboard/inbox">Inbox</Link>
             </li>
             </ul>
             );

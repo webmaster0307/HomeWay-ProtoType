@@ -132,3 +132,38 @@ border-radius: 4px;
     padding-left: 20%;
 }
 
+#question{
+    
+        background:none!important;
+        color:darkblue;
+        border:none; 
+        font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+        font-size: 10px;
+        padding-left: 32%;
+        padding-bottom: 4%;
+        font: inherit;
+        /*border is optional*/
+        
+        cursor: pointer;
+   
+}
+
+#askquestion{
+    background:none!important;
+    cursor: pointer;
+    color:darkblue;
+        border:none; 
+        font-family: "Roboto",Arial,"Helvetica Neue",Helvetica,sans-serif;
+        font-size: 20px;
+        
+}
+
+#ques1{
+    width:100%
+}
+
+
+#mess{
+    width: 60%;
+    
+}

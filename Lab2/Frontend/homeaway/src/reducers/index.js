@@ -17,6 +17,8 @@ import BookProperty from "./bookproperty.js"
 import FetchMytrips from "./fetchmytrips.js"
 import OwnerDashboard from "./ownerdashboard.js"
 import GetTravelers from "./gettravelers.js"
+import GetOwnerMessages from "./get_owner_messages.js"
+import GetTravelerMessages from "./get_traveler_messages.js"
 const rootReducer = combineReducers({
     traveler_login: TravelerLoginReducer,
     form: formReducer,
@@ -35,7 +37,9 @@ const rootReducer = combineReducers({
     book_property:BookProperty,
     fetch_trips:FetchMytrips,
     owner_properties:OwnerDashboard,
-    get_travelers:GetTravelers
+    get_travelers:GetTravelers,
+    get_owner_messages:GetOwnerMessages,
+    get_traveler_messages:GetTravelerMessages
   });
   
   export default rootReducer;

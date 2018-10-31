@@ -20,6 +20,9 @@ import Home from './components/home';
 import DetailsView from './components/detailsview';
 import Trips from './components/trips';
 import OwnerDashboard from './components/ownerdashboard';
+import Inbox from './components/inbox';
+import TravelerInbox from './components/travelerinbox';
+
 import ShowTravelers from './components/showtravelers';
 import SearchProperty from './components/searchproperty.js';
 
@@ -31,10 +34,9 @@ class App extends Component {
   render() {
     return (
 
-      <div className="App">
+       <div className="App">
       
-        
-          <div>
+        <div>
           
           <Route path="/" component={Home} exact/>
           <Route path="/travelerlogin" component={Login}/>
@@ -44,6 +46,8 @@ class App extends Component {
 
           <Route path='/dashboard' component={Dashboard} />
           <Route path='/dashboard/profile' component={Profile}/>
+          <Route path='/dashboard/inbox' component={Inbox}/>
+          <Route path='/dashboard/travelerinbox' component={TravelerInbox}/>
           <Route path='/dashboard/mytrips' component={Trips}/>
           <Route path='/dashboard/ownerdashboard' component={OwnerDashboard}/>
           <Route path='/findproperty' component={SearchProperty}/>

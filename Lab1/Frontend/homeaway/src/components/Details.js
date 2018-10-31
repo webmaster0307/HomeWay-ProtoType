@@ -8,6 +8,9 @@ import SearchProperty from './searchproperty'
 import Logo1 from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
 
+ 
+// To include the default styles
+
 
 // const styles = {
 //   card: {
@@ -174,7 +177,7 @@ guests:this.state.guests
       {this.state.message}
       {details}
       <h3>{this.state.dataavailable}</h3>
-      
+
       </div>
   );
 }

@@ -11,8 +11,10 @@ import bathtub from '../../src/bathtub.png';
 import toilet from '../../src/toilet.png';
 import night from '../../src/night.png';
 import fetch_detailsview from '../actions/fetchdetailsview.js';
-
+import PostQestion from './postquestion.js'
 import book_property from '../actions/bookproperty.js';
+import post_question from '../actions/postquestion.js';
+
 import { connect } from "react-redux";
 import cookie from 'react-cookies';
 import jwt from 'jsonwebtoken' ;
@@ -31,19 +33,29 @@ constructor(props){
       end:this.props.match.params.end,
       guests:this.props.match.params.guests,
       loginstatus:"loggedin",
-      bookingstatus:null
+      bookingstatus:null,
+      isOpen: false
 
   }
   this.setStart=this.setStart.bind(this);
   this.setEnd=this.setEnd.bind(this);
   this.setGuests=this.setGuests.bind(this);
   this.bookthisproperty=this.bookthisproperty.bind(this);
-
+  this.postquestion=this.postquestion.bind(this);
+  this.setfname=this.setfname.bind(this);
+  this.setlname=this.setlname.bind(this);
+  this.setemail=this.setemail.bind(this);
+  this.setmessage=this.setmessage.bind(this);
+  
   
 }
 
 componentWillReceiveProps(nextProps){
     this.setState({
+        fname:"",
+        lname:"",
+        emailaddress:"",
+        message:"",
         property_detail:nextProps.property_detail,
         bookingstatus:nextProps.message
     })
@@ -108,12 +120,52 @@ console.log("in booking");
 
 
 }
+setfname(e){
+    this.setState({
+        fname:e.target.value
+    })
+}
+setlname(e){
+    this.setState({
+        lname:e.target.value
+    })
+}
+setemail(e){
+    this.setState({
+        emailaddress:e.target.value
+    })
+}
+setmessage(e){
+    this.setState({
+        message:e.target.value
+    })
+}
+postquestion(e){
+    e.preventDefault();
+    var data={
+        firstName:this.state.fname,
+        lastName:this.state.lname,
+        contactno:this.state.emailaddress,
+        message:this.state.message,
+        owner:this.state.property_detail.username,
+        emailaddress:jwt.decode(localStorage.getItem('jwtToken')).emailaddress
+       
+
+    }
+    this.props.post_question(data);
+
+}
 
 setStart(e){
 this.setState({
     start:e.target.value
 })
 }
+toggleModal = () => {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  }
 
 setEnd(e){
     this.setState({
@@ -154,7 +206,67 @@ this.props.fetch_detailsview(this.state.property_id);
 }
 
   render() {
+      let buttonques=null;
+      let token=jwt.decode(localStorage.getItem('jwtToken'));
+      if(token && token.UserType=="traveler"){
+          buttonques=(<div style={{paddingLeft:"36%"}}>
+          <button id="askquestion" onClick={this.toggleModal}>Ask owner a question</button><br/><br/>
+          </div>);
+      }
+
       
+      let question=null;
+      if(this.state.isOpen==true){
+        question=(
+            <div>
+            <div id="side-panel" className="card">
+                    
+            </div>
+            <div className="card-body">
+
+        <div className="panel panel-default">
+
+        <form id="ques1" className="form-group" onSubmit={this.postquestion}>
+        <div className="inline">
+<table>
+<tbody>
+<tr>
+<td className="first">
+<span className="form-group">
+
+
+    <input type="text" className="form-control" id="inputFirstName" placeholder="First Name"  onChange={this.setfname} required/>
+
+</span>
+</td>
+    <td>
+<span className="form-group">
+
+    <input type="text" className="form-control" id="inputLastName" placeholder="LastName" onChange={this.setlname} required/>
+
+</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<input type="tel" id="phone" name="phone"
+           placeholder="Contact Number (123-456-7890)"
+           pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+           required onChange={this.setemail} className="form-control"></input><br></br>
+        <input  className="form-control" type="textarea" placeholder="Message to owner" onChange={this.setmessage} required></input><br></br>
+        <div style={{paddingLeft:"140px"}}>
+        <button   id="mess" className="btn btn-primary">Send</button>
+        </div>
+        </form>
+            </div>
+            
+            </div>
+           </div>
+
+        );
+      }
       console.log("s",this.props.property_detail);
       //var {address}=this.state.property_detail;
       var loginmessage=null;
@@ -184,6 +296,7 @@ this.props.fetch_detailsview(this.state.property_id);
     return (
 
       <div>
+      
       <div>
             <nav className="navbar navbar-default">
                     <div className="container-fluid">
@@ -289,10 +402,12 @@ this.props.fetch_detailsview(this.state.property_id);
 
    
     </div>
+    
     <br/><br/><br/><br/>
     </div>
     
-    <div className="col-md-4 sticky" id="side-sticky">
+    
+    <div className="col-md-4" id="side-sticky">
         
                 <div id="side-panel" className="card">
                     <div className="card-body">
@@ -334,21 +449,40 @@ this.props.fetch_detailsview(this.state.property_id);
                 <br/>
                 <hr/>
                 <div id="booking">
+
                 <button  type="submit" className="btn btn-primary" style={{width:"50%"}}>Book Now</button>
                
                 </div>
                 </form>
-               
+        
         <label id="loginmsg">{loginmessage}</label>
         <label id="loginmsg">{this.state.bookingstatus}</label>
                 </div>
             </div>
                     </div>
-                    </div>
-                    </div>
                     
+                    </div><br/>
+                    {buttonques}
+                    <div>
+                    
+                    {question}
+                    </div>
+                    </div>
+                    <br/>
+                   
+            
+                    
+                    
+
+
+
+
     </div>
     </div>
+    
+
+
+    
     </div>
     </div>
     </div>
@@ -363,7 +497,8 @@ function mapStateToProps(state) {
         images:state.fetch_details_view.images,
         status:state.fetch_details_view.status,
         booking_status:state.book_property.status,
-        message:state.book_property.message
+        message:state.book_property.message,
+        
       
     
     
@@ -374,7 +509,9 @@ function mapStateToProps(state) {
   const mapDispachToProps = dispatch => {
     return {
         fetch_detailsview: (id) => dispatch(fetch_detailsview(id)),
-        book_property: (data) => dispatch(book_property(data))
+        book_property: (data) => dispatch(book_property(data)),
+        post_question: (data) => dispatch(post_question(data))
+
     };
   };
   

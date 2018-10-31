@@ -19,6 +19,7 @@ var traveler = require('./models/traveler');
 var listing = require('./models/property');
 var booking = require('./models/booking');
 var kafka = require('./kafka/client');
+var question = require('./models/question');
 
 var jwt = require('jsonwebtoken');
 var maxSize=1000000*90;
@@ -1831,6 +1832,130 @@ kafka.make_request('property_travelers',obj, function(err,results){
     
 });
 
+
+});
+
+//Profile Post for owner
+app.post('/postquestion', function (req, res) {
+    
+   
+    console.log("Inside Post Question Request Handler");
+//console.log(JSON.stringify(req.body));
+
+console.log("Res 1: ",req.body);
+
+var q=new question({
+    firstName:req.body.firstName,
+    lastName:req.body.lastName,
+    emailaddress:req.body.emailaddress,
+    message:req.body.message,
+    owner:req.body.owner,
+    contactno:req.body.contactno,
+    reply:""
+
+   
+    
+
+})
+
+q.save().then((doc)=>{
+    
+console.log("ques",doc);
+res.writeHead(200, {
+    'Content-Type': 'text/plain'
+})
+res.end("Message sent to owner");
+}).catch((e)=>{
+    res.writeHead(400, {
+        'Content-Type': 'text/plain'
+    })
+    res.end("Error in sending message");
+})
+
+});
+
+
+
+
+app.get('/getownermessages', function (req, res) {
+    
+   
+    console.log("Inside Post Question Request Handler");
+//console.log(JSON.stringify(req.body));
+
+console.log("Res 1: ",req.body);
+var owner=req.query.owner;
+
+
+question.find({owner:owner}).then((doc)=>{
+    
+console.log("ques",doc);
+res.writeHead(200, {
+    'Content-Type': 'application/json'
+})
+res.end(JSON.stringify(doc));
+}).catch((e)=>{
+    res.writeHead(400, {
+        'Content-Type': 'text/plain'
+    })
+    res.end("Error in sending message");
+})
+
+});
+
+
+
+app.post('/replytomessage', function (req, res) {
+    
+   
+    console.log("Inside Post Question Request Handler");
+//console.log(JSON.stringify(req.body));
+
+console.log("Res 1: ",req.body);
+
+
+question.findOneAndUpdate({_id:req.body.message_id},{$set:{reply:req.body.reply}},{new:true})
+    .then((doc)=>{
+        console.log("update doc",doc);
+
+res.writeHead(200, {
+    'Content-Type': 'text/plain'
+})
+res.end("Message sent to owner");
+}).catch((e)=>{
+    res.writeHead(400, {
+        'Content-Type': 'text/plain'
+    })
+    res.end("Error in sending message");
+})
+
+});
+
+
+
+app.get('/gettravelermessages', function (req, res) {
+    
+   
+    console.log("Inside get owner replies");
+//console.log(JSON.stringify(req.body));
+
+console.log("Res 1: ",req.body);
+var traveler=req.query.emailaddress;
+
+
+question.find({emailaddress:traveler}).then((doc)=>{
+    
+console.log("ques",doc);
+res.writeHead(200, {
+    'Content-Type': 'application/json'
+})
+res.end(JSON.stringify(doc));
+}).catch((e)=>{
+    res.writeHead(400, {
+        'Content-Type': 'text/plain'
+    })
+    res.end("Error in retrieving messages");
+})
 
 });
 
