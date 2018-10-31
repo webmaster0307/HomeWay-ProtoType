@@ -9,7 +9,12 @@ import Logo1 from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
 import fetch_properties from '../actions/fetchproperties.js';
 import { connect } from "react-redux";
+import Pagination1 from "./paji"
+import {paginate} from "../paginate";
+import { isNullOrUndefined } from 'util';
 
+
+ 
 // const styles = {
 //   card: {
 //     maxWidth: 600,
@@ -32,12 +37,47 @@ this.state={
     end:props.match.params.end,
     guests:props.match.params.guests,
     dataavailable:null,
-    message:null
+    message:null,
+    currentPage:1,
+    filterloc:props.match.params.loc,
+            filterstart:props.match.params.start,
+            filterend:props.match.params.end,
+            filterbed:2
 
 }
     this.downloadData=this.downloadData.bind(this);
-}
+    this.handlePageChange=this.handlePageChange.bind(this);
+    this.filterloc=this.filterloc.bind(this);
+    this.filterstart=this.filterstart.bind(this);
+    this.filterend=this.filterend.bind(this);
+    this.filterbed=this.filterbed.bind(this);
 
+
+
+}
+filterstart(e){
+    this.setState({
+        filterstart:e.target.value
+    })
+}
+filterend(e){
+    this.setState({
+        filterend:e.target.value
+    })
+}
+filterloc(e){
+    this.setState({
+        filterloc:e.target.value
+    })
+}
+filterbed(e){
+    this.setState({
+        filterbed:e.target.value
+    })
+}
+handlePageChange(page){
+    this.setState({currentPage : page });
+    }
  downloadData(){
      console.log('Downloading data...');
      console.log({
@@ -108,6 +148,11 @@ componentDidMount(){
     this.downloadData();
 
 }
+componentWillReceiveProps(nextProps){
+    this.setState({
+        properties:nextProps.properties
+    })
+}
 
 
 componentDidUpdate(prevProps, prevState, snapshot){
@@ -126,7 +171,8 @@ componentDidUpdate(prevProps, prevState, snapshot){
             end:this.props.match.params.end,
             location:this.props.match.params.loc,
             guests:this.props.match.params.guests,
-            message:null
+            message:null,
+            
           });
         //   console.log('new state set as below');
         //   console.log(this.state);
@@ -155,6 +201,11 @@ componentDidUpdate(prevProps, prevState, snapshot){
 //   }
 
   render(){
+    const prope = paginate(this.props.properties, this.state.currentPage, 5)
+    console.log("Properties",this.props.properties);
+    // let pagin=this.props.properties
+
+    
     let dataavailable=null;
       if(this.props.status!=200){
           dataavailable="Unkown error occured"
@@ -169,7 +220,10 @@ end:this.state.end,
 guests:this.state.guests
 
       }
-      let filteredProperties=this.props.properties;
+
+      let filteredProperties=this.props.properties?this.props.properties.filter((property)=>{
+          return property.address.indexOf(this.state.filterloc)!=-1       }):[];
+        
       if(this.props.status===200 && filteredProperties!==null){
          details =filteredProperties.map(property => {
             return(
@@ -181,12 +235,24 @@ guests:this.state.guests
   return (
       <div>
       
+
+<div className="form-group row" style={{paddingLeft:"140px"}}>
+
+<div className="col-md-2"><input type="text" class="form-control" name="location" placeholder="Where do you want to go?" onChange={this.filterloc}/></div>
+<div className="col-md-1"  id="spacing-right1"><input type="date" className="form-control date" name="start" placeholder="Arrive" onChange={this.filterstart}/></div>
+<div className="col-md-1"  id="spacing-right1"><input type="date" className="form-control date" name="end" placeholder="Depart" onChange={this.filterend}/></div>
+<div className="col-md-3"  id="spacing-right1"><input type="number" className="form-control " name="bed" placeholder="Bedrooms" onChange={this.filterbed}/></div>
+
+</div>
       {this.state.message}
-      {details}
+     
+      <div style={{paddingTop:"10%"}}>{details}</div>
       <h3>{dataavailable}</h3>
       
+
+      <div>
       
-      
+      </div>
       </div>
   );
 }

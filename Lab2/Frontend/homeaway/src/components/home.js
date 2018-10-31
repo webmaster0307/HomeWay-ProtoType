@@ -15,9 +15,9 @@ constructor(props){
     super(props);
 
     this.state={
-        location:"San Francisco",
-        start:'2018-09-03',
-        end:"2018-09-26",
+        location:"Sa",
+        start:'2018-10-03',
+        end:"2018-10-26",
         guests:2,
         decoded:jwt.decode(localStorage.getItem('jwtToken'))?jwt.decode(localStorage.getItem('jwtToken')):false
     };
