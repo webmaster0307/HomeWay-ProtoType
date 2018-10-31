@@ -5,7 +5,7 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var cors = require('cors');
 var mysql = require('mysql');
-var pool = require('./pool');
+
 var path=require('path');
 var fs=require('fs');
 var multer=require('multer');
@@ -20,7 +20,11 @@ var listing = require('./models/property');
 var booking = require('./models/booking');
 var kafka = require('./kafka/client');
 var question = require('./models/question');
+var routes=require('./routes/login.js');
+var profile_routes=require('./routes/profile.js');
+var dashboard_routes=require('./routes/dashboard.js');
 
+var property_routes=require('./routes/property.js');
 var jwt = require('jsonwebtoken');
 var maxSize=1000000*90;
 
@@ -123,266 +127,130 @@ app.use(express.static(path.join(__dirname,'/properties')));
 app.use(express.static(path.join(__dirname,'/uploads')));
 
 
-//Route to handle Post Request Call
-app.post('/travelerlogin', function (req, res) {
+// //Route to handle Post Request Call
+// app.post('/travelerlogin', function (req, res) {
 
-    console.log("Inside Login Post Request");
-    var emailaddress = req.body.emailaddress;
-    console.log(req.body.emailaddress);
+//     console.log("Inside Login Post Request");
+//     var emailaddress = req.body.emailaddress;
+//     console.log(req.body.emailaddress);
 
-    var password = req.body.password;
+//     var password = req.body.password;
     
 
-    //Kafka request
+//     //Kafka request
 
-    kafka.make_request('traveler_login',req.body, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
-
-            res.end("Login Unsuccessfull");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            })
-            res.end(JSON.stringify(results));
-            }
-        
-    });
-
-
-
-
-
-    // traveler.findOne({ emailaddress: req.body.emailaddress ,UserType:"traveler"})
-
-    //     .then((user) => {
-    //         console.log("user data from db",user );
-    //         if (user) {
-    //             user.comparePassword(req.body.password, function(err, isMatch) {
-
-    //                 if (isMatch && !err) {
-    //                 res.cookie('traveler', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
-    //                 var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
-    //                     expiresIn: 10080 // in seconds
-    //                 });
-    //                 //response.status(200).json({success: true, token: 'JWT ' + token});
-    //                 console.log("token",token);
-    //                 console.log(res.cookie);
-    //                 req.session.user = user.emailaddress;
-    //                 console.log("Session", req.session.user);
-    //                 res.writeHead(200, {
-    //                     'Content-Type': 'application/json'
-    //                 })
-    //                 var auth={
-    //                     username:user.emailaddress,
-    //                 token:token
-    //                 }
-
-    //                 res.end(JSON.stringify(auth));
-    //             }else {
-                    
-    //                     res.writeHead(400, {
-    //                         'Content-Type': 'text/plain'
-    //                     })
-
-    //                     res.end("Login Unsuccessfull");
-                    
-    //             }
-    //             } );
-    //         } else{
-    //             res.writeHead(400, {
-    //                 'Content-Type': 'text/plain'
-    //             })
-
-    //             res.end("Login Unsuccessfull");
-    //         }
-    //     })
-});
-
-
-//fetch properties for details view
-
-
-app.get('/fetchproperties', function (req, res) {
-    //console.log("in fetch");
-    //console.log(req.body);
-    //console.log(typeof(req.body.location));
-
-var obj={
-    start:req.query.start,
-    end:req.query.end,
-    accomodates:req.query.guests,
-    location:req.query.location
-}
-
-    var sql = "SELECT * FROM property_details WHERE accomodates >= " +
-        mysql.escape(req.query.guests) + " AND start <=" +
-        mysql.escape(req.query.start) + " AND end >=" +
-        mysql.escape(req.query.end) + "AND address LIKE " + mysql.escape("%" + req.query.location + "%"); //"'%San Carlos%'";
-   
-
-
-    // listing.find({accomodates:{$gte:req.query.guests},start:{$lte:req.query.start},end:{$gte:req.query.end},address: { $regex: '.*' + req.query.location + '.*' ,$options:'i'}})
-    // .then((doc)=>{
-
-    //     let temp = JSON.stringify(doc);
-    //     temp=JSON.parse(temp);
-        
-    //     var imgs = [];
-    //     for (var i = 0; i < temp.length; i++) {
-
-    //         if (temp[i].fileNames != "") {
-    //             let propimg = temp[i].fileNames.split('*');
-    //             propimg.pop();
-    //             let filN = propimg[0];
-    //             imgs.push(propimg);
-    //             temp[i].imageName = filN;
-    //         }
-    //     }
-    //     console.log("ssd",temp);
-    //     res.writeHead(200, {
-    //         'Content-Type': 'application/json'
-    //     })
-    //     res.end(JSON.stringify(temp));
-    // }).catch((e)=>{
-    //     res.writeHead(400, {
-    //         'Content-Type': 'text/plain'
-    //     })
-    //     res.end("Error while fetching properties");
-    // })
-
-
-    kafka.make_request('search_properties',obj, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
-
-            res.end("Error while fetching properties");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            })
-            res.end(JSON.stringify(results));
-            }
-        
-    });
-
-})
-
-
-
-
-//fetch properties for trips
-app.get('/mytrips', function(req,res){
-    console.log("in fetch trips");
-    console.log(req.query.username);
-    var username=req.query.username;
-    var sql = "SELECT * FROM booking WHERE username = " +
-    mysql.escape(username); 
-     
-//     pool.getConnection(function (err, con) {
-//         if (err) {
+//     kafka.make_request('traveler_login',req.body, function(err,results){
+//         console.log('in result');
+//         console.log(results);
+//         if (err){
+//             console.log("Inside err");
 //             res.writeHead(400, {
 //                 'Content-Type': 'text/plain'
 //             })
-//             res.end("Could Not Get Connection Object");
-//         } else {
-//     con.query(sql,function(err,result){
-//         console.log(sql);
-       
-//         if(err){
-//             res.writeHead(400,{
-//                 'Content-Type' : 'text/plain'
-//             })
-//             res.end("Error while retrieving Book Details");
+
+//             res.end("Login Unsuccessfull");
 //         }else{
-//            // console.log("Properties",path.join(__dirname,'/properties'));
-//             let temp = JSON.stringify(result);
-
-//             temp = JSON.parse(temp);
-//            if(temp.length!=0){
-// console.log("temp",temp);
-
-//             var ids=[];
-
-//             for(var i=0;i<temp.length;i++){
-//                 ids.push(temp[i].property_id);
+//             console.log("Inside else");
+//             console.log("Results",results);
+//             res.writeHead(200, {
+//                 'Content-Type': 'application/json'
+//             })
+//             res.end(JSON.stringify(results));
 //             }
-//             console.log("temp",temp);
-
-//             console.log('ids',ids);
-         
-//             var str="SELECT * FROM property_details WHERE property_id IN ( " +
-//             mysql.escape(ids) + ")"; 
-
-//             //console.log("temp",temp);
-//             con.query(str,function(err,result){
-//                 console.log("str",str);
-               
-//                 if(err){
-//                     res.writeHead(400,{
-//                         'Content-Type' : 'text/plain'
-//                     })
-//                     res.end("Error while retrieving Book Details");
-//                 }else{
-//                    // console.log("Properties",path.join(__dirname,'/properties'));
-//                     let temp1 = JSON.stringify(result);
         
-//                     temp1 = JSON.parse(temp1);
-        
-//                     console.log("temp1",temp1);
-//                     console.log("temp1",temp1);
-
-//                     for(var i=0;i<temp.length;i++){
-//                         for(var j=0;j<temp1.length;j++){
-//                             if(temp[i].property_id==temp1[j].property_id){
-//                                 temp[i].headline=temp1[j].headline;
-//                                 temp[i].guests=temp1[j].guests;
-//                                 temp[i].currency=temp1[j].currency;
-//                                 temp[i].rate=temp1[j].rate;
-//                                 temp[i].imageName=temp1[j].images.split('*')[1]
-//                                 break;
-//                             }
-
-//                         }
-//                     }
-                                                
-//                     res.writeHead(200,{
-//                         'Content-Type' : 'application/json'
-//                     })
-//                     res.end(JSON.stringify(temp));
-//                 }
-//             });
-            
-            
-                
-                
-            
-//         }else{
-//             res.writeHead(200,{
-//                 'Content-Type' : 'application/json'
-//             })
-//             res.end(JSON.stringify(temp));
-//         }
-
-//     }
 //     });
+// });
+
+ app.use(routes);
+ app.use(profile_routes);
+ app.use(property_routes);
+ app.use(dashboard_routes);
+//fetch properties for details view
+
+
+// app.get('/fetchproperties', function (req, res) {
+//     //console.log("in fetch");
+//     //console.log(req.body);
+//     //console.log(typeof(req.body.location));
+
+// var obj={
+//     start:req.query.start,
+//     end:req.query.end,
+//     accomodates:req.query.guests,
+//     location:req.query.location
 // }
-    
+
+//     var sql = "SELECT * FROM property_details WHERE accomodates >= " +
+//         mysql.escape(req.query.guests) + " AND start <=" +
+//         mysql.escape(req.query.start) + " AND end >=" +
+//         mysql.escape(req.query.end) + "AND address LIKE " + mysql.escape("%" + req.query.location + "%"); //"'%San Carlos%'";
+   
+
+
+//     // listing.find({accomodates:{$gte:req.query.guests},start:{$lte:req.query.start},end:{$gte:req.query.end},address: { $regex: '.*' + req.query.location + '.*' ,$options:'i'}})
+//     // .then((doc)=>{
+
+//     //     let temp = JSON.stringify(doc);
+//     //     temp=JSON.parse(temp);
+        
+//     //     var imgs = [];
+//     //     for (var i = 0; i < temp.length; i++) {
+
+//     //         if (temp[i].fileNames != "") {
+//     //             let propimg = temp[i].fileNames.split('*');
+//     //             propimg.pop();
+//     //             let filN = propimg[0];
+//     //             imgs.push(propimg);
+//     //             temp[i].imageName = filN;
+//     //         }
+//     //     }
+//     //     console.log("ssd",temp);
+//     //     res.writeHead(200, {
+//     //         'Content-Type': 'application/json'
+//     //     })
+//     //     res.end(JSON.stringify(temp));
+//     // }).catch((e)=>{
+//     //     res.writeHead(400, {
+//     //         'Content-Type': 'text/plain'
+//     //     })
+//     //     res.end("Error while fetching properties");
+//     // })
+
+
+//     kafka.make_request('search_properties',obj, function(err,results){
+//         console.log('in result');
+//         console.log(results);
+//         if (err){
+//             console.log("Inside err");
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
+
+//             res.end("Error while fetching properties");
+//         }else{
+//             console.log("Inside else");
+//             console.log("Results",results);
+//             res.writeHead(200, {
+//                 'Content-Type': 'application/json'
+//             })
+//             res.end(JSON.stringify(results));
+//             }
+        
+//     });
+
 // })
+
+
+
+
+// //fetch properties for trips
+// app.get('/mytrips', function(req,res){
+//     console.log("in fetch trips");
+//     console.log(req.query.username);
+//     var username=req.query.username;
+//     var sql = "SELECT * FROM booking WHERE username = " +
+//     mysql.escape(username); 
+
 // booking.find({traveler:username}).then((docs)=>{
 //     console.log("bookings",docs);
 //     let temp=JSON.stringify(docs);
@@ -447,32 +315,32 @@ app.get('/mytrips', function(req,res){
 
 
 
-var obj={
-    username:username
-}
+// var obj={
+//     username:username
+// }
 
-kafka.make_request('my_trips',obj, function(err,results){
-    console.log('in result');
-    console.log(results);
-    if (err){
-        console.log("Inside err");
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
+// kafka.make_request('my_trips',obj, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
 
-        res.end("Error while fetching trips");
-    }else{
-        console.log("Inside else");
-        console.log("Results",results);
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
-        res.end(JSON.stringify(results));
-        }
+//         res.end("Error while fetching trips");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
+//         res.end(JSON.stringify(results));
+//         }
     
-});
+// });
 
-})
+// })
 
 
 
@@ -482,12 +350,12 @@ kafka.make_request('my_trips',obj, function(err,results){
 //fetch owner properties
 
 
-app.get('/ownerproperties', function(req,res){
-    console.log("in fetch owner properties");
-    var owner=req.query.username;
+// app.get('/ownerproperties', function(req,res){
+//     console.log("in fetch owner properties");
+//     var owner=req.query.username;
 
-    var sql = "SELECT * FROM property_details WHERE username = " +
-    mysql.escape(owner);
+//     var sql = "SELECT * FROM property_details WHERE username = " +
+//     mysql.escape(owner);
     // listing.find({username:owner})
     // .then((doc)=>{
 
@@ -518,30 +386,30 @@ app.get('/ownerproperties', function(req,res){
     // })
 
 
-var obj={
-    username:owner
-}
-kafka.make_request('my_properties',obj, function(err,results){
-    console.log('in result');
-    console.log(results);
-    if (err){
-        console.log("Inside err");
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
+// var obj={
+//     username:owner
+// }
+// kafka.make_request('my_properties',obj, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
 
-        res.end("Error while fetching trips");
-    }else{
-        console.log("Inside else");
-        console.log("Results",results);
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
-        res.end(JSON.stringify(results));
-        }
+//         res.end("Error while fetching trips");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
+//         res.end(JSON.stringify(results));
+//         }
     
-});
-})
+// });
+// })
 
 
 
@@ -559,14 +427,14 @@ kafka.make_request('my_properties',obj, function(err,results){
 //get listing---old
 
 
-app.get('/getlisting', function(req,res){
-    console.log("in get listing");
-    console.log("cbcb",req.query.property_id);
-    var id=req.query.property_id;
+// app.get('/getlisting', function(req,res){
+//     console.log("in get listing");
+//     console.log("cbcb",req.query.property_id);
+//     var id=req.query.property_id;
 
-    var obj={
-        id:id
-    }
+//     var obj={
+//         id:id
+//     }
     //console.log(typeof(req.body.location));
 
     
@@ -640,32 +508,29 @@ app.get('/getlisting', function(req,res){
 
 
 
-kafka.make_request('details_view',obj, function(err,results){
-    console.log('in result');
-    console.log(results);
-    if (err){
-        console.log("Inside err");
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
+// kafka.make_request('details_view',obj, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
 
-        res.end("Login Unsuccessfull");
-    }else{
-        console.log("Inside else");
-        console.log("Results",results);
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        })
-        res.end(JSON.stringify(results));
-        }
+//         res.end("Login Unsuccessfull");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
+//         res.end(JSON.stringify(results));
+//         }
     
-});
+// });
 
 
-})
-
-
-
+// })
 
 
 
@@ -673,87 +538,88 @@ kafka.make_request('details_view',obj, function(err,results){
 
 
 
-//Route to handle Post Request Call
-app.post('/ownerlogin', function (req, res) {
-
-    console.log("Inside Owner Login Post Request");
-    var emailaddress = req.body.emailaddress;
-    var password = req.body.password;
-    var sql = "SELECT *  FROM owner_login_data WHERE emailaddress = " +
-        mysql.escape(emailaddress);
 
 
 
-   // traveler.findOne({ emailaddress: req.body.emailaddress,UserType:"owner" })
+// //Route to handle Post Request Call
+// app.post('/ownerlogin', function (req, res) {
 
-        // .then((user) => {
-        //     console.log("user data from db",user );
-        //     if (user) {
-        //         user.comparePassword(req.body.password, function(err, isMatch) {
+//     console.log("Inside Owner Login Post Request");
+//     var emailaddress = req.body.emailaddress;
+//     var password = req.body.password;
+//     var sql = "SELECT *  FROM owner_login_data WHERE emailaddress = " +
+//         mysql.escape(emailaddress);
 
-        //             if (isMatch && !err) {
-        //             res.cookie('owner', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
-        //             var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
-        //                 expiresIn: 10080 // in seconds
-        //             });
-        //             //response.status(200).json({success: true, token: 'JWT ' + token});
-        //             console.log(res.cookie);
-        //             req.session.user = user.emailaddress;
-        //             console.log("Session", req.session.user);
-        //             res.writeHead(200, {
-        //                 'Content-Type': 'application/json'
-        //             })
-        //             var auth={
-        //                 username:user.emailaddress,
-        //             token:token
-        //             }
 
-        //             res.end(JSON.stringify(auth));
-        //         }else {
+
+//    // traveler.findOne({ emailaddress: req.body.emailaddress,UserType:"owner" })
+
+//         // .then((user) => {
+//         //     console.log("user data from db",user );
+//         //     if (user) {
+//         //         user.comparePassword(req.body.password, function(err, isMatch) {
+
+//         //             if (isMatch && !err) {
+//         //             res.cookie('owner', user.emailaddress, { maxAge: 9000000, httpOnly: false, path: '/' });
+//         //             var token = jwt.sign(user.toJSON(),"CMPE_273_Homeaway_secret", {
+//         //                 expiresIn: 10080 // in seconds
+//         //             });
+//         //             //response.status(200).json({success: true, token: 'JWT ' + token});
+//         //             console.log(res.cookie);
+//         //             req.session.user = user.emailaddress;
+//         //             console.log("Session", req.session.user);
+//         //             res.writeHead(200, {
+//         //                 'Content-Type': 'application/json'
+//         //             })
+//         //             var auth={
+//         //                 username:user.emailaddress,
+//         //             token:token
+//         //             }
+
+//         //             res.end(JSON.stringify(auth));
+//         //         }else {
                     
-        //                 res.writeHead(400, {
-        //                     'Content-Type': 'text/plain'
-        //                 })
+//         //                 res.writeHead(400, {
+//         //                     'Content-Type': 'text/plain'
+//         //                 })
 
-        //                 res.end("Login Unsuccessfull");
+//         //                 res.end("Login Unsuccessfull");
                     
-        //         }
-        //         } );
-        //     } else{
-        //         res.writeHead(400, {
-        //             'Content-Type': 'text/plain'
-        //         })
+//         //         }
+//         //         } );
+//         //     } else{
+//         //         res.writeHead(400, {
+//         //             'Content-Type': 'text/plain'
+//         //         })
 
-        //         res.end("Login Unsuccessfull");
-        //     }
-        // })
+//         //         res.end("Login Unsuccessfull");
+//         //     }
+//         // })
 
 
 
-    kafka.make_request('owner_login',req.body, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+//     kafka.make_request('owner_login',req.body, function(err,results){
+//         console.log('in result');
+//         console.log(results);
+//         if (err){
+//             console.log("Inside err");
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
 
-            res.end("Login Unsuccessfull");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            })
-            res.end(JSON.stringify(results));
-            }
+//             res.end("Login Unsuccessfull");
+//         }else{
+//             console.log("Inside else");
+//             console.log("Results",results);
+//             res.writeHead(200, {
+//                 'Content-Type': 'application/json'
+//             })
+//             res.end(JSON.stringify(results));
+//             }
         
-    });
+//     });
 
-});
-
-
+// });
 
 
 
@@ -764,218 +630,220 @@ app.post('/ownerlogin', function (req, res) {
 
 
 
-app.get('/gettravelerprofile',function (req, res) {
-
-    console.log("Inside Traveler Profile Get Request");
-    var emailaddress=req.query.emailaddress;
-    console.log("Email",emailaddress);
-    var sql = "SELECT *  FROM traveler_login_data WHERE emailaddress = " +
-        mysql.escape(emailaddress);
 
 
-        const testFolder = path.join(__dirname,'/uploads');
+// app.get('/gettravelerprofile',function (req, res) {
+
+//     console.log("Inside Traveler Profile Get Request");
+//     var emailaddress=req.query.emailaddress;
+//     console.log("Email",emailaddress);
+//     var sql = "SELECT *  FROM traveler_login_data WHERE emailaddress = " +
+//         mysql.escape(emailaddress);
+
+
+//         const testFolder = path.join(__dirname,'/uploads');
 
           
 
-    // pool.getConnection(function (err, con) {
-    //     if (err) {
-    //         res.writeHead(400, {
-    //             'Content-Type': 'text/plain'
-    //         })
-    //         res.end("Could Not Get Connection Object");
-    //     } else {
-    //         con.query(sql, function (err, result) {
-    //             console.log("req is", JSON.stringify(req.body));
-    //             console.log(result);
-    //             if (err || result.length == 0) {
-    //                 res.writeHead(400, {
-    //                     'Content-Type': 'text/plain'
-    //                 })
-    //                 res.end("Incorrect emailaddress");
-    //             } else {
-    //                 let temp = JSON.stringify(result[0]);
+//     // pool.getConnection(function (err, con) {
+//     //     if (err) {
+//     //         res.writeHead(400, {
+//     //             'Content-Type': 'text/plain'
+//     //         })
+//     //         res.end("Could Not Get Connection Object");
+//     //     } else {
+//     //         con.query(sql, function (err, result) {
+//     //             console.log("req is", JSON.stringify(req.body));
+//     //             console.log(result);
+//     //             if (err || result.length == 0) {
+//     //                 res.writeHead(400, {
+//     //                     'Content-Type': 'text/plain'
+//     //                 })
+//     //                 res.end("Incorrect emailaddress");
+//     //             } else {
+//     //                 let temp = JSON.stringify(result[0]);
 
-    //                 temp = JSON.parse(temp);
+//     //                 temp = JSON.parse(temp);
 
-    //                 console.log("temp",temp);
-    //                 var data={
-    //                     firstname :temp.firstname,
-    //                     lastname :temp.lastname,
-    //                     aboutme:temp.aboutme,
-    //                     citycountry:temp.citycountry,
-    //                     company:temp.company,
-    //                     school:temp.school,
-    //   hometown:temp.school,
-    //   languages:temp.languages,
-    //   gender:temp.gender,
+//     //                 console.log("temp",temp);
+//     //                 var data={
+//     //                     firstname :temp.firstname,
+//     //                     lastname :temp.lastname,
+//     //                     aboutme:temp.aboutme,
+//     //                     citycountry:temp.citycountry,
+//     //                     company:temp.company,
+//     //                     school:temp.school,
+//     //   hometown:temp.school,
+//     //   languages:temp.languages,
+//     //   gender:temp.gender,
       
                         
-    //                 }
-    //                 if(temp.profile_image!=null){
-    //                 data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',temp.profile_image))).toString('base64');
-    //                 }
-    //                  res.writeHead(200, {
-    //                     'Content-Type': 'application/json'
-    //                 })
+//     //                 }
+//     //                 if(temp.profile_image!=null){
+//     //                 data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',temp.profile_image))).toString('base64');
+//     //                 }
+//     //                  res.writeHead(200, {
+//     //                     'Content-Type': 'application/json'
+//     //                 })
 
-    //                 res.end(JSON.stringify(data));
+//     //                 res.end(JSON.stringify(data));
 
-    //             }
-    //         });
-    //     }
-    // });
-  var obj={
-      emailaddress:emailaddress
-  }
+//     //             }
+//     //         });
+//     //     }
+//     // });
+//   var obj={
+//       emailaddress:emailaddress
+//   }
 
-    // traveler.findOne({emailaddress:emailaddress,UserType:"traveler"}).then((doc)=>{
-    //     console.log("Find",doc);
+//     // traveler.findOne({emailaddress:emailaddress,UserType:"traveler"}).then((doc)=>{
+//     //     console.log("Find",doc);
 
-    //     var data={
-    //                           firstname :doc.firstName,
-    //                            lastname :doc.lastName,
-    //                             aboutme:doc.aboutme,
-    //                             citycountry:doc.citycountry,
-    //                             company:doc.company,
-    //                             school:doc.school,
-    //            hometown:doc.hometown,
-    //            languages:doc.languages,
-    //            gender:doc.gender,
+//     //     var data={
+//     //                           firstname :doc.firstName,
+//     //                            lastname :doc.lastName,
+//     //                             aboutme:doc.aboutme,
+//     //                             citycountry:doc.citycountry,
+//     //                             company:doc.company,
+//     //                             school:doc.school,
+//     //            hometown:doc.hometown,
+//     //            languages:doc.languages,
+//     //            gender:doc.gender,
               
                                 
-    //                         }
+//     //                         }
                             
-    //                         if(doc.profile_image!=""){
-    //                                           data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',doc.profile_image))).toString('base64');
-    //                                            }
+//     //                         if(doc.profile_image!=""){
+//     //                                           data.photo=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',doc.profile_image))).toString('base64');
+//     //                                            }
 
                                                
-    //                                             res.writeHead(200, {
-    //                                                 'Content-Type': 'application/json'
-    //                            })
-    //                            res.end(JSON.stringify(data));
+//     //                                             res.writeHead(200, {
+//     //                                                 'Content-Type': 'application/json'
+//     //                            })
+//     //                            res.end(JSON.stringify(data));
 
-    // }).catch((e)=>{
-    //     console.log("in catch");
-    //     res.writeHead(400, {
-    //                         'Content-Type': 'text/plain'
-    //                      })
-    //                          res.end("Incorrect emailaddress");
-    // })
+//     // }).catch((e)=>{
+//     //     console.log("in catch");
+//     //     res.writeHead(400, {
+//     //                         'Content-Type': 'text/plain'
+//     //                      })
+//     //                          res.end("Incorrect emailaddress");
+//     // })
 
 
 
-    kafka.make_request('get_traveler_profile',obj, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+//     kafka.make_request('get_traveler_profile',obj, function(err,results){
+//         console.log('in result');
+//         console.log(results);
+//         if (err){
+//             console.log("Inside err");
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
 
-            res.end("Login Unsuccessfull");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
-            if(results.image_find!=""){
-            var image=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',results.image_find))).toString('base64');
-            results.photo=image;
-            }
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            })
-            res.end(JSON.stringify(results));
-            }
+//             res.end("Login Unsuccessfull");
+//         }else{
+//             console.log("Inside else");
+//             console.log("Results",results);
+//             if(results.image_find!=""){
+//             var image=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',results.image_find))).toString('base64');
+//             results.photo=image;
+//             }
+//             res.writeHead(200, {
+//                 'Content-Type': 'application/json'
+//             })
+//             res.end(JSON.stringify(results));
+//             }
         
-    });
+//     });
 
 
 
 
-});
+// });
 
 //Get Profile photo
 
 
 
 
-app.get('/getownerprofile', function (req, res) {
+// app.get('/getownerprofile', function (req, res) {
 
-    console.log("Inside Traveler Profile Get Request");
-    var emailaddress = req.query.username;
-    console.log(emailaddress);
-    var sql = "SELECT *  FROM owner_login_data WHERE emailaddress = " +
-        mysql.escape(emailaddress);
-
-
-    const testFolder = path.join(__dirname, '/uploads');
+//     console.log("Inside Traveler Profile Get Request");
+//     var emailaddress = req.query.username;
+//     console.log(emailaddress);
+//     var sql = "SELECT *  FROM owner_login_data WHERE emailaddress = " +
+//         mysql.escape(emailaddress);
 
 
-    // traveler.findOne({ emailaddress: emailaddress, UserType: "owner" }).then((doc) => {
-    //     console.log("Find", doc);
-
-    //     var data = {
-    //         firstname: doc.firstName,
-    //         lastname: doc.lastName,
-    //         aboutme: doc.aboutme,
-    //         citycountry: doc.citycountry,
-    //         company: doc.company,
-    //         school: doc.school,
-    //         hometown: doc.hometown,
-    //         languages: doc.languages,
-    //         gender: doc.gender,
+//     const testFolder = path.join(__dirname, '/uploads');
 
 
-    //     }
+//     // traveler.findOne({ emailaddress: emailaddress, UserType: "owner" }).then((doc) => {
+//     //     console.log("Find", doc);
 
-    //     if (doc.profile_image) {
-    //         data.photo = new Buffer(fs.readFileSync(path.join(__dirname + '/uploads', doc.profile_image))).toString('base64');
-    //     }
-    //     res.writeHead(200, {
-    //         'Content-Type': 'application/json'
-    //     })
-    //     res.end(JSON.stringify(data));
+//     //     var data = {
+//     //         firstname: doc.firstName,
+//     //         lastname: doc.lastName,
+//     //         aboutme: doc.aboutme,
+//     //         citycountry: doc.citycountry,
+//     //         company: doc.company,
+//     //         school: doc.school,
+//     //         hometown: doc.hometown,
+//     //         languages: doc.languages,
+//     //         gender: doc.gender,
 
-    // }).catch((e) => {
-    //     res.writeHead(400, {
-    //         'Content-Type': 'text/plain'
-    //     })
-    //     res.end("Incorrect emailaddress");
-    // })
-    var obj={
-        emailaddress:emailaddress
-    }
 
-    kafka.make_request('get_owner_profile',obj, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+//     //     }
 
-            res.end("Login Unsuccessfull");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
-            if(results.image_find!=""){
-            var image=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',results.image_find))).toString('base64');
-            results.photo=image;
-            }
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            })
-            res.end(JSON.stringify(results));
-            }
+//     //     if (doc.profile_image) {
+//     //         data.photo = new Buffer(fs.readFileSync(path.join(__dirname + '/uploads', doc.profile_image))).toString('base64');
+//     //     }
+//     //     res.writeHead(200, {
+//     //         'Content-Type': 'application/json'
+//     //     })
+//     //     res.end(JSON.stringify(data));
+
+//     // }).catch((e) => {
+//     //     res.writeHead(400, {
+//     //         'Content-Type': 'text/plain'
+//     //     })
+//     //     res.end("Incorrect emailaddress");
+//     // })
+//     var obj={
+//         emailaddress:emailaddress
+//     }
+
+//     kafka.make_request('get_owner_profile',obj, function(err,results){
+//         console.log('in result');
+//         console.log(results);
+//         if (err){
+//             console.log("Inside err");
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
+
+//             res.end("Login Unsuccessfull");
+//         }else{
+//             console.log("Inside else");
+//             console.log("Results",results);
+//             if(results.image_find!=""){
+//             var image=new Buffer(fs.readFileSync(path.join(__dirname + '/uploads',results.image_find))).toString('base64');
+//             results.photo=image;
+//             }
+//             res.writeHead(200, {
+//                 'Content-Type': 'application/json'
+//             })
+//             res.end(JSON.stringify(results));
+//             }
         
-    });
+//     });
 
 
-});
+// });
 
-//Get Profile photo
+// //Get Profile photo
 
 
 
@@ -1273,267 +1141,267 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
             
 
 
-//Traveler Sign Up
-    app.post('/signup', function (req, res) {
-        console.log("Inside Sign Up Request Handler");
-        console.log(req.body)
-        var emailaddress = req.body.emailaddress;
-        console.log(req.body.firstName);
-       // bcrypt.hash(req.body.password, 10, function(err, hash) {
-            // Store hash in database
+// //Traveler Sign Up
+//     app.post('/signup', function (req, res) {
+//         console.log("Inside Sign Up Request Handler");
+//         console.log(req.body)
+//         var emailaddress = req.body.emailaddress;
+//         console.log(req.body.firstName);
+//        // bcrypt.hash(req.body.password, 10, function(err, hash) {
+//             // Store hash in database
             
-            // var str = "select * from traveler_login_data where emailaddress= " + mysql.escape(emailaddress);
-            // var sql = "INSERT INTO traveler_login_data VALUES ( " +
-            //     mysql.escape(null) + " ," +
-            //     mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " +
-            //     mysql.escape(req.body.emailaddress) + ", " + mysql.escape(hash) + " , " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") +") ";
+//             // var str = "select * from traveler_login_data where emailaddress= " + mysql.escape(emailaddress);
+//             // var sql = "INSERT INTO traveler_login_data VALUES ( " +
+//             //     mysql.escape(null) + " ," +
+//             //     mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " +
+//             //     mysql.escape(req.body.emailaddress) + ", " + mysql.escape(hash) + " , " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") +") ";
     
-            // pool.getConnection(function (err, con) {
-            //     if (err) {
-            //         res.writeHead(400, {
+//             // pool.getConnection(function (err, con) {
+//             //     if (err) {
+//             //         res.writeHead(400, {
     
-            //             'Content-Type': 'text/plain'
-            //         })
+//             //             'Content-Type': 'text/plain'
+//             //         })
     
-            //         res.end("Could Not Get Connection Object");
-            //         console.log("got1");
-            //     }
-            //     else {
+//             //         res.end("Could Not Get Connection Object");
+//             //         console.log("got1");
+//             //     }
+//             //     else {
     
-            //         con.query(str, function (err, result) {
-            //             if (err || result.length === 1) {
+//             //         con.query(str, function (err, result) {
+//             //             if (err || result.length === 1) {
     
-            //                 res.writeHead(201, {
-            //                     'Content-Type': 'text/plain'
-            //                 })
-            //                 res.end("User with this email address already exist");
+//             //                 res.writeHead(201, {
+//             //                     'Content-Type': 'text/plain'
+//             //                 })
+//             //                 res.end("User with this email address already exist");
     
-            //             } else {
+//             //             } else {
     
-            //                 con.query(sql, function (err, result) {
+//             //                 con.query(sql, function (err, result) {
     
-            //                     if (err) {
-            //                         console.log("got");
-            //                         res.writeHead(400, {
-            //                             'Content-Type': 'text/plain'
-            //                         })
+//             //                     if (err) {
+//             //                         console.log("got");
+//             //                         res.writeHead(400, {
+//             //                             'Content-Type': 'text/plain'
+//             //                         })
     
-            //                         res.end("Error");
-            //                     } else {
-            //                         console.log("else");
-            //                         res.writeHead(200, {
-            //                             'Content-Type': 'text/plain'
-            //                         })
-            //                         res.end('User successfully added');
-            //                     }
-            //                 });
-            //             }
-            //         });
+//             //                         res.end("Error");
+//             //                     } else {
+//             //                         console.log("else");
+//             //                         res.writeHead(200, {
+//             //                             'Content-Type': 'text/plain'
+//             //                         })
+//             //                         res.end('User successfully added');
+//             //                     }
+//             //                 });
+//             //             }
+//             //         });
     
-            //     }
-            // });
-            // traveler.find({emailaddress:emailaddress,"UserType":"traveler"}).then((doc)=>{
-            //     console.log(doc);
-            //     if(doc.length!=0){
-            //         res.writeHead(400, {
-            //             'Content-Type': 'text/plain'})
-            //             res.end("User already exists");
-            //     }else{
-            //         var trav=new traveler({
-            //             UserType:'traveler',
-            //             firstName:req.body.firstName,
-            //             lastName:req.body.lastName,
-            //             emailaddress:req.body.emailaddress,
-            //             password:req.body.password,
-            //             aboutme:"",
-            //             citycountry:"",
-            //             company:"",
-            //             school:"",
-            //             hometown:"",
-            //             languages:"",
-            //             gender:"",
-            //             profile_image:""
+//             //     }
+//             // });
+//             // traveler.find({emailaddress:emailaddress,"UserType":"traveler"}).then((doc)=>{
+//             //     console.log(doc);
+//             //     if(doc.length!=0){
+//             //         res.writeHead(400, {
+//             //             'Content-Type': 'text/plain'})
+//             //             res.end("User already exists");
+//             //     }else{
+//             //         var trav=new traveler({
+//             //             UserType:'traveler',
+//             //             firstName:req.body.firstName,
+//             //             lastName:req.body.lastName,
+//             //             emailaddress:req.body.emailaddress,
+//             //             password:req.body.password,
+//             //             aboutme:"",
+//             //             citycountry:"",
+//             //             company:"",
+//             //             school:"",
+//             //             hometown:"",
+//             //             languages:"",
+//             //             gender:"",
+//             //             profile_image:""
         
-            //         })
+//             //         })
                 
-            //         trav.save().then((doc)=>{
-            //             res.writeHead(200, {
-            //                 'Content-Type': 'text/plain'})
-            //                  res.end('User successfully added');
-            //         },(e)=>{
-            //             res.writeHead(400, {
-            //                 'Content-Type': 'text/plain'})
-            //                 res.end("User already exists");
-            //         })
-            //     }
+//             //         trav.save().then((doc)=>{
+//             //             res.writeHead(200, {
+//             //                 'Content-Type': 'text/plain'})
+//             //                  res.end('User successfully added');
+//             //         },(e)=>{
+//             //             res.writeHead(400, {
+//             //                 'Content-Type': 'text/plain'})
+//             //                 res.end("User already exists");
+//             //         })
+//             //     }
                 
-            // }).catch((e)=>{
-            //     res.writeHead(400, {
-            //         'Content-Type': 'text/plain'})
-            //         res.end("User already exists");
-            //  // })
-            // })
+//             // }).catch((e)=>{
+//             //     res.writeHead(400, {
+//             //         'Content-Type': 'text/plain'})
+//             //         res.end("User already exists");
+//             //  // })
+//             // })
 
 
 
-        kafka.make_request('traveler_sign_up',req.body, function(err,results){
-            console.log('in result');
-            console.log(results);
-            if (err){
-                console.log("Inside err");
-                res.writeHead(400, {
-                    'Content-Type': 'text/plain'
-                })
+//         kafka.make_request('traveler_sign_up',req.body, function(err,results){
+//             console.log('in result');
+//             console.log(results);
+//             if (err){
+//                 console.log("Inside err");
+//                 res.writeHead(400, {
+//                     'Content-Type': 'text/plain'
+//                 })
     
-                res.end("User already exists");
-            }else{
-                console.log("Inside else");
-                console.log("Results",results);
+//                 res.end("User already exists");
+//             }else{
+//                 console.log("Inside else");
+//                 console.log("Results",results);
                 
-                res.writeHead(200, {
-                    'Content-Type': 'text/plain'
-                })
-                res.end('User successfully added');
-                }
+//                 res.writeHead(200, {
+//                     'Content-Type': 'text/plain'
+//                 })
+//                 res.end('User successfully added');
+//                 }
             
-        });
+//         });
         
        
-    });
+//     });
 
 
 
 
-//Owner Sign Up
-app.post('/ownersignup', function (req, res) {
-    console.log("Inside Owner Sign Up Request Handler");
-    console.log(req.body);
-    var emailaddress = req.body.emailaddress;
-    console.log(req.body.firstName);
-    //bcrypt.hash(req.body.password, 10, function(err, hash) {
-        // Store hash in database
+// //Owner Sign Up
+// app.post('/ownersignup', function (req, res) {
+//     console.log("Inside Owner Sign Up Request Handler");
+//     console.log(req.body);
+//     var emailaddress = req.body.emailaddress;
+//     console.log(req.body.firstName);
+//     //bcrypt.hash(req.body.password, 10, function(err, hash) {
+//         // Store hash in database
         
-        // var str = "select * from owner_login_data where emailaddress= " + mysql.escape(emailaddress);
-        // var sql = "INSERT INTO owner_login_data VALUES ( " +
-        //     mysql.escape(null) + " ," +
-        //     mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " +
-        //     mysql.escape(req.body.emailaddress) + ", " + mysql.escape(hash) + " , " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") +") ";
+//         // var str = "select * from owner_login_data where emailaddress= " + mysql.escape(emailaddress);
+//         // var sql = "INSERT INTO owner_login_data VALUES ( " +
+//         //     mysql.escape(null) + " ," +
+//         //     mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " +
+//         //     mysql.escape(req.body.emailaddress) + ", " + mysql.escape(hash) + " , " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") + ", " + mysql.escape("") +") ";
 
-        // pool.getConnection(function (err, con) {
-        //     if (err) {
-        //         res.writeHead(400, {
+//         // pool.getConnection(function (err, con) {
+//         //     if (err) {
+//         //         res.writeHead(400, {
 
-        //             'Content-Type': 'text/plain'
-        //         })
+//         //             'Content-Type': 'text/plain'
+//         //         })
 
-        //         res.end("Could Not Get Connection Object");
-        //         console.log("got1");
-        //     }
-        //     else {
+//         //         res.end("Could Not Get Connection Object");
+//         //         console.log("got1");
+//         //     }
+//         //     else {
 
-        //         con.query(str, function (err, result) {
-        //             if (err || result.length === 1) {
+//         //         con.query(str, function (err, result) {
+//         //             if (err || result.length === 1) {
 
-        //                 res.writeHead(201, {
-        //                     'Content-Type': 'text/plain'
-        //                 })
-        //                 res.end("User with this email address already exist");
+//         //                 res.writeHead(201, {
+//         //                     'Content-Type': 'text/plain'
+//         //                 })
+//         //                 res.end("User with this email address already exist");
 
-        //             } else {
+//         //             } else {
 
-        //                 con.query(sql, function (err, result) {
-        //                     console.log(sql);
+//         //                 con.query(sql, function (err, result) {
+//         //                     console.log(sql);
 
-        //                     if (err) {
-        //                         console.log("got");
-        //                         res.writeHead(400, {
-        //                             'Content-Type': 'text/plain'
-        //                         })
+//         //                     if (err) {
+//         //                         console.log("got");
+//         //                         res.writeHead(400, {
+//         //                             'Content-Type': 'text/plain'
+//         //                         })
 
-        //                         res.end("Error");
-        //                     } else {
-        //                         console.log("else");
-        //                         res.writeHead(200, {
-        //                             'Content-Type': 'text/plain'
-        //                         })
-        //                         res.end('User successfully added');
-        //                     }
-        //                 });
-        //             }
-        //         });
+//         //                         res.end("Error");
+//         //                     } else {
+//         //                         console.log("else");
+//         //                         res.writeHead(200, {
+//         //                             'Content-Type': 'text/plain'
+//         //                         })
+//         //                         res.end('User successfully added');
+//         //                     }
+//         //                 });
+//         //             }
+//         //         });
 
-        //     }
-        // });
-        // var trav=new traveler({
-        //     UserType:'owner',
-        //     firstName:req.body.firstName,
-        //     lastName:req.body.lastName,
-        //     emailaddress:req.body.emailaddress,
-        //     password:req.body.password,
-        //     aboutme:"",
-        //     citycountry:"",
-        //     company:"",
-        //     school:"",
-        //     hometown:"",
-        //     languages:"",
-        //     gender:"",
-        //     profile_image:""
+//         //     }
+//         // });
+//         // var trav=new traveler({
+//         //     UserType:'owner',
+//         //     firstName:req.body.firstName,
+//         //     lastName:req.body.lastName,
+//         //     emailaddress:req.body.emailaddress,
+//         //     password:req.body.password,
+//         //     aboutme:"",
+//         //     citycountry:"",
+//         //     company:"",
+//         //     school:"",
+//         //     hometown:"",
+//         //     languages:"",
+//         //     gender:"",
+//         //     profile_image:""
 
-        // })
+//         // })
     
-        // trav.save().then((doc)=>{
-        //     res.writeHead(200, {
-        //         'Content-Type': 'text/plain'})
-        //          res.end('User successfully added');
-        // },(e)=>{
-        //     res.writeHead(400, {
-        //         'Content-Type': 'text/plain'})
-        //         res.end("Error");
-        // })
+//         // trav.save().then((doc)=>{
+//         //     res.writeHead(200, {
+//         //         'Content-Type': 'text/plain'})
+//         //          res.end('User successfully added');
+//         // },(e)=>{
+//         //     res.writeHead(400, {
+//         //         'Content-Type': 'text/plain'})
+//         //         res.end("Error");
+//         // })
     
 
-      //});
+//       //});
 
-      kafka.make_request('owner_sign_up',req.body, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+//       kafka.make_request('owner_sign_up',req.body, function(err,results){
+//         console.log('in result');
+//         console.log(results);
+//         if (err){
+//             console.log("Inside err");
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
 
-            res.end("User already exists");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
+//             res.end("User already exists");
+//         }else{
+//             console.log("Inside else");
+//             console.log("Results",results);
             
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            })
-            res.end('User successfully added');
-            }
+//             res.writeHead(200, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end('User successfully added');
+//             }
         
-    });
+//     });
     
    
-});
+// });
 
 
 //Book Property
 
-    app.post('/bookproperty', function (req, res) {
-        console.log("Inside Booking Request Handler");
-        var emailaddress = req.body.username;
-        console.log(req.body.property_id);
-        var available= "select * from property_details where property_id= " + mysql.escape(req.body.property_id);
-        // var str = "select * from booking where property_id= " + mysql.escape(req.body.property_id);
+    // app.post('/bookproperty', function (req, res) {
+    //     console.log("Inside Booking Request Handler");
+    //     var emailaddress = req.body.username;
+    //     console.log(req.body.property_id);
+    //     var available= "select * from property_details where property_id= " + mysql.escape(req.body.property_id);
+    //     // var str = "select * from booking where property_id= " + mysql.escape(req.body.property_id);
         // var sql = "INSERT INTO booking VALUES ( " +
         //     mysql.escape(null) + " ," +
         //     mysql.escape(req.body.property_id) + " , " + mysql.escape(req.body.start) + " , " +
         //     mysql.escape(req.body.end) + ", " + mysql.escape(req.body.guests) + " , " + mysql.escape(req.body.username) + ") ";
 
-        console.log("Data to book",req.body);
+        //console.log("Data to book",req.body);
 
 
 //         pool.getConnection(function (err, con) {
@@ -1718,122 +1586,122 @@ app.post('/ownersignup', function (req, res) {
 
 
 
-      kafka.make_request('book_property',req.body, function(err,results){
-        console.log('in result');
-        console.log(results);
-        if (err){
-            console.log("Inside err");
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
+    //   kafka.make_request('book_property',req.body, function(err,results){
+    //     console.log('in result');
+    //     console.log(results);
+    //     if (err){
+    //         console.log("Inside err");
+    //         res.writeHead(400, {
+    //             'Content-Type': 'text/plain'
+    //         })
 
-            res.end("Unable to book this property");
-        }else{
-            if(results.length==0){
-                res.writeHead(201, {
-                    'Content-Type': 'text/plain'
-                })
-                res.end("Booking Collision");
-            }else{
-                console.log("Inside else");
-                console.log("Results",results);
-                res.writeHead(200, {
-                    'Content-Type': 'application/json'
-                })
-                res.end(JSON.stringify(results));
-            }
+    //         res.end("Unable to book this property");
+    //     }else{
+    //         if(results.length==0){
+    //             res.writeHead(201, {
+    //                 'Content-Type': 'text/plain'
+    //             })
+    //             res.end("Booking Collision");
+    //         }else{
+    //             console.log("Inside else");
+    //             console.log("Results",results);
+    //             res.writeHead(200, {
+    //                 'Content-Type': 'application/json'
+    //             })
+    //             res.end(JSON.stringify(results));
+    //         }
             
-            }
+    //         }
         
-    });
+    // });
 
-    });
+    // });
     
 
 
-//Get booked Travelers for a property
-app.get('/getpropertytravelers', function (req, res) {
-    console.log("Inside get property travelers Request Handler");
-    var property_id = req.query.property_id;
-    console.log(property_id);
+// //Get booked Travelers for a property
+// app.get('/getpropertytravelers', function (req, res) {
+//     console.log("Inside get property travelers Request Handler");
+//     var property_id = req.query.property_id;
+//     console.log(property_id);
     
-    var str = "select username from booking where property_id= " + mysql.escape(property_id);
+//     var str = "select username from booking where property_id= " + mysql.escape(property_id);
     
-// booking.find({property_id:property_id}).then((docs)=>{
-//     console.log("bookings",docs)
-// if(docs.length==0){
-//     res.writeHead(201, {
-//         'Content-Type': 'text/plain'
-//     })
-//     res.end("Invalid property");
-// }else{
-//     let temp=JSON.stringify(docs);
-//     temp=JSON.parse(temp);
-//     var emailaddress=[];
-//     for (var i=0; i<temp.length;i++){
-//         emailaddress.push(temp[i].traveler);
-//     }
-//     traveler.find({"emailaddress":{$in:emailaddress},UserType:"traveler"}).select('-password')
-//     .then((travelers)=>{
+// // booking.find({property_id:property_id}).then((docs)=>{
+// //     console.log("bookings",docs)
+// // if(docs.length==0){
+// //     res.writeHead(201, {
+// //         'Content-Type': 'text/plain'
+// //     })
+// //     res.end("Invalid property");
+// // }else{
+// //     let temp=JSON.stringify(docs);
+// //     temp=JSON.parse(temp);
+// //     var emailaddress=[];
+// //     for (var i=0; i<temp.length;i++){
+// //         emailaddress.push(temp[i].traveler);
+// //     }
+// //     traveler.find({"emailaddress":{$in:emailaddress},UserType:"traveler"}).select('-password')
+// //     .then((travelers)=>{
 
-// console.log(travelers);
-//         let temp1=JSON.stringify(travelers)
-//         temp1=JSON.parse(temp1);
+// // console.log(travelers);
+// //         let temp1=JSON.stringify(travelers)
+// //         temp1=JSON.parse(temp1);
        
 
-//         res.writeHead(200, {
-//             'Content-Type': 'application/json'
+// //         res.writeHead(200, {
+// //             'Content-Type': 'application/json'
+// //         })
+
+// //         res.end(JSON.stringify(temp1));
+
+
+        
+// //     })
+// // }
+// // }).catch((e)=>{
+// //     res.writeHead(400, {
+// //         'Content-Type': 'text/plain'
+// //     })
+
+// //     res.end("Error");
+// // })
+
+
+// obj={
+//     property_id:property_id
+// }
+// kafka.make_request('property_travelers',obj, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
 //         })
 
-//         res.end(JSON.stringify(temp1));
-
-
+//         res.end("Unable to find travelers");
+//     }else{
+//         if(results.length==0){
+//             res.writeHead(201, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end("Invalid property");
+//         }else{
+//             console.log("Inside else");
+//             console.log("Results",results);
+//             res.writeHead(200, {
+//                 'Content-Type': 'application/json'
+//             })
+//             res.end(JSON.stringify(results));
+//         }
         
-//     })
-// }
-// }).catch((e)=>{
-//     res.writeHead(400, {
-//         'Content-Type': 'text/plain'
-//     })
-
-//     res.end("Error");
-// })
-
-
-obj={
-    property_id:property_id
-}
-kafka.make_request('property_travelers',obj, function(err,results){
-    console.log('in result');
-    console.log(results);
-    if (err){
-        console.log("Inside err");
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        })
-
-        res.end("Unable to find travelers");
-    }else{
-        if(results.length==0){
-            res.writeHead(201, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Invalid property");
-        }else{
-            console.log("Inside else");
-            console.log("Results",results);
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            })
-            res.end(JSON.stringify(results));
-        }
-        
-        }
+//         }
     
-});
+// });
 
 
-});
+// });
 
 //Profile Post for owner
 app.post('/postquestion', function (req, res) {
