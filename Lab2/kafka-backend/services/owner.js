@@ -26,7 +26,7 @@ function handle_request(msg, callback){
     traveler.findOne({ emailaddress: msg.emailaddress ,UserType:"owner"})
 
         .then((user) => {
-            console.log("user data from db",user );
+            //console.log("user data from db",user );
             if (user) {
                 user.comparePassword(msg.password, function(err, isMatch) {
 
@@ -52,12 +52,12 @@ function handle_request(msg, callback){
                     callback(null,result);
                 }else {
                     
-                       callback(null,"Error");
+                       callback(null,[]);
                     
                 }
                 } );
             } else{
-                callback(null,"Error");
+                callback(null,[]);
             }
             
         })

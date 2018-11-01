@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import Pagination1 from "./paji"
 import {paginate} from "../paginate";
 import { isNullOrUndefined } from 'util';
-
+import filter from '../../src/download.jpeg';
 
  
 // const styles = {
@@ -42,7 +42,8 @@ this.state={
     filterloc:props.match.params.loc,
             filterstart:props.match.params.start,
             filterend:props.match.params.end,
-            filterbed:2
+            filterbed:2,
+            filterprice:100000
 
 }
     this.downloadData=this.downloadData.bind(this);
@@ -51,9 +52,13 @@ this.state={
     this.filterstart=this.filterstart.bind(this);
     this.filterend=this.filterend.bind(this);
     this.filterbed=this.filterbed.bind(this);
+    this.setfilterprice=this.setfilterprice.bind(this);
+}
 
-
-
+setfilterprice(e){
+    this.setState({
+        filterprice:e.target.value
+    })
 }
 filterstart(e){
     this.setState({
@@ -220,9 +225,10 @@ end:this.state.end,
 guests:this.state.guests
 
       }
-
+console.log("startfil",this.state.filterstart);
       let filteredProperties=this.props.properties?this.props.properties.filter((property)=>{
-          return property.address.indexOf(this.state.filterloc)!=-1       }):[];
+          console.log(new Date(property.start));
+          return (Number(property.rate)<=Number(this.state.filterprice) && property.address.toLowerCase().indexOf(this.state.filterloc.toLowerCase())!=-1 && Number(property.bedrooms)>=Number(this.state.filterbed))}):[];
         
       if(this.props.status===200 && filteredProperties!==null){
          details =filteredProperties.map(property => {
@@ -236,17 +242,20 @@ guests:this.state.guests
       <div>
       
 
-<div className="form-group row" style={{paddingLeft:"140px"}}>
-
-<div className="col-md-2"><input type="text" class="form-control" name="location" placeholder="Where do you want to go?" onChange={this.filterloc}/></div>
-<div className="col-md-1"  id="spacing-right1"><input type="date" className="form-control date" name="start" placeholder="Arrive" onChange={this.filterstart}/></div>
-<div className="col-md-1"  id="spacing-right1"><input type="date" className="form-control date" name="end" placeholder="Depart" onChange={this.filterend}/></div>
-<div className="col-md-3"  id="spacing-right1"><input type="number" className="form-control " name="bed" placeholder="Bedrooms" onChange={this.filterbed}/></div>
-
+<div className="form-group row" style={{paddingLeft:"100px"}}>
+<img src={filter} style={{width:"120px",height:"60px"}}></img>
+<div className="col-md-3"><input type="text" class="form-control" name="location" placeholder="Where do you want to go?" onChange={this.filterloc}/></div>&nbsp;&nbsp;
+<div className="col-md-1" style={{paddingRight:"30px"}}><input type="date" className="form-control date" name="start" placeholder="Arrive" onChange={this.filterstart}/></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<div className="col-md-1"><input type="date" className="form-control date" name="end" placeholder="Depart" onChange={this.filterend}/></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<div className="col-md-2" style={{paddingLeft:"30px"}}><input type="number" className="form-control " name="bed" placeholder="Bedrooms" onChange={this.filterbed}/></div>
+<div class="col-md-2">
+  <input type="range" min="100" max="1000"  class="slider" id="myRange" onChange={this.setfilterprice} defaultValue='1000'/>
+  <p>Price: {this.state.filterprice}<span id="demo"></span></p>
+</div>
 </div>
       {this.state.message}
      
-      <div style={{paddingTop:"10%"}}>{details}</div>
+      <div style={{paddingTop:"4%"}}>{details}</div>
       <h3>{dataavailable}</h3>
       
 

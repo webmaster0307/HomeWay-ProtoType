@@ -37,12 +37,20 @@ router.post('/travelerlogin', function (req, res) {
         console.log(results);
         if (err){
             console.log("Inside err");
+            console.log("Login Unssss");
             res.writeHead(400, {
                 'Content-Type': 'text/plain'
             })
 
             res.end("Login Unsuccessfull");
         }else{
+            if(results.length==0){
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("Login Unsuccessfull");
+            }else{
             console.log("Inside else");
             console.log("Results",results);
             res.writeHead(200, {
@@ -50,6 +58,7 @@ router.post('/travelerlogin', function (req, res) {
             })
             res.end(JSON.stringify(results));
             }
+        }
         
     });
 });
@@ -123,13 +132,22 @@ router.post('/ownerlogin', function (req, res) {
 
             res.end("Login Unsuccessfull");
         }else{
-            console.log("Inside else");
+            if(results.length==0){
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("Login Unsuccessfull");
+            }else{
+                console.log("Inside else");
             console.log("Results",results);
             res.writeHead(200, {
                 'Content-Type': 'application/json'
             })
             res.end(JSON.stringify(results));
             }
+            }
+            
         
     });
 

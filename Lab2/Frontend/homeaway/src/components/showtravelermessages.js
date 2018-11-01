@@ -12,7 +12,7 @@ import ShowMyProperties from './ShowMyProperties';
 import jwt from "jsonwebtoken";
 import '../../src/CSS/inbox.css';
 
-class ShowMessages extends Component {
+class ShowTravelerMessages extends Component {
     constructor(props) {
         super(props);
         this.state={
@@ -32,13 +32,24 @@ this.sendReply=this.sendReply.bind(this);
     }
 
     sendReply(e){
+        let token=jwt.decode(localStorage.getItem('jwtToken'))
         e.preventDefault();
         var data={
-            message_id:this.props.message._id,
-            reply:this.state.reply
+            firstName:token.firstName,
+            lastName:token.lastName,
+            contactno:"208-407-7157",
+            reply:this.state.reply,
+            owner:this.props.message.owner,
+            emailaddress:token.emailaddress
+            
+    
         }
+        // var data={
+        //     message_id:this.props.message._id,
+        //     reply:this.state.reply
+        // }
 
-        axios.post('http://localhost:3001/replytomessage',data).then((res)=>{
+        axios.post('http://localhost:3001/postquestion',data).then((res)=>{
             this.setState({
                 status:200
             })
@@ -53,8 +64,7 @@ this.setState({
     render() {
         //console.log("trips", this.state.properties);
         //console.log(this.state.dataavailable);
-        let dis=this.props.message.reply=="" || this.state.status==200?<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto" onChange={this.reply} type="text" placeholder="input here..." value={this.state.reply} />:<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto" onChange={this.reply} type="text" placeholder="input here..." value={this.state.reply} disabled/>
-
+        let dis=this.props.message.reply=="" || this.state.status==200?<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto"  type="text" placeholder="input here..." value={this.state.reply} />:<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto"  type="text" placeholder="input here..." value={this.state.reply} disabled/>
         let butondis=<button onClick={this.sendReply}><img style={{height:"40px"}} src={Logo2}></img></button>;
 
 
@@ -96,6 +106,9 @@ this.setState({
                                        {butondis}
                                        </td>
                                        </tr>
+                                       <tr>
+                                       
+                                       </tr>
                                        </tbody>
                                        
                                        </table>
@@ -125,5 +138,5 @@ this.setState({
     }
 }
   
-  export default ShowMessages;
+  export default ShowTravelerMessages;
   

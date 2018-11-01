@@ -9,10 +9,12 @@ import cookie from 'react-cookies';
 import { connect } from "react-redux";
 import get_owner_properties  from '../actions/ownerdashboard.js';
 import get_traveler_messages from '../actions/get_traveler_messages.js';
-import ShowMessages from "./showmessages.js"
+import ShowTravelerMessages from "./showtravelermessages.js"
 import ShowMyProperties from './ShowMyProperties';
 import jwt from "jsonwebtoken";
 import '../../src/CSS/inbox.css';
+import Logo2 from '../../src/2d97d2a8-a05e-4979-bf35-10ad17075324.png';
+
 
 class TravelerInbox extends Component {
     constructor() {
@@ -20,10 +22,33 @@ class TravelerInbox extends Component {
         this.state={
             messages:null,
             status:null,
-            dataavailable:null
+            dataavailable:null,
+            reply:""
         }
 
+
     }
+
+
+    // sendReply(e){
+    //     e.preventDefault();
+    //     let token=jwt.decode(localStorage.getItem('jwtToken'))
+    //     var data={
+    //         firstName:token.firstName,
+    //         lastName:token.lastName,
+    //         contactno:"208-407-7157",
+    //         reply:this.state.reply,
+    //         owner:this.props.message.owner,
+    //         emailaddress:token.emailaddress
+    //     }
+
+    //     axios.post('http://localhost:3001/postquestion',data).then((res)=>{
+
+    //     }).catch(e=>{
+
+    //     })
+        
+    // }
 
 componentDidMount(){
     console.log("called");
@@ -51,7 +76,9 @@ componentDidMount(){
     render() {
         //console.log("trips", this.state.properties);
         //console.log(this.state.dataavailable);
-
+        
+       // e.preventDefault();
+        
 
         let details = null;
         
@@ -59,7 +86,7 @@ componentDidMount(){
             details = this.props.messages.map(message => {
                 return (
                     
-                    <ShowMessages message={message}></ShowMessages>
+                    <ShowTravelerMessages message={message}></ShowTravelerMessages>
 
 
 
@@ -88,10 +115,7 @@ componentDidMount(){
          {details}
 </div>
 
-
-
-
-            </div>
+           </div>
 
 
 
