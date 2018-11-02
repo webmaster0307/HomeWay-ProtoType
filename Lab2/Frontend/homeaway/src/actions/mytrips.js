@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const FETCH_MY_TRIPS = "fetch_my_trips";
 export const FETCH_MY_TRIPS_ERROR = "fetch_my_trips_error";
 
@@ -16,6 +18,7 @@ function getSuccess(response) {
   }
 
 function fetch_mytrips(username){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
 
     //middleware call
   //receive response from backend

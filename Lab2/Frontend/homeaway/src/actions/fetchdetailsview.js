@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const FETCH_DETAILS_VIEW = "fetch_detailsview";
 export const FETCH_DETAILS_VIEW_ERROR = "fetch_detailsview_error";
 
@@ -16,6 +18,7 @@ function getSuccess(response) {
   }
 
 function fetch_detailsview(id){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
 
     //middleware call
   //receive response from backend

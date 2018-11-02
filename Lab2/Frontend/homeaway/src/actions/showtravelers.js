@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const GET_TRAVELERS = "get_travelers";
 export const GET_TRAVELERS_ERROR = "get_travelers_error";
 
@@ -16,6 +18,8 @@ function getError(response) {
   }
 
 function get_travelers(property_id){
+setAuthorizationToken(localStorage.getItem('jwtToken'));
+
 console.log("action called");
     //middleware call
   //receive response from backend

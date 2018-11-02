@@ -19,6 +19,8 @@ const OwnerSignUpReducer = (state = {}, action) => {
         console.log("temp error",temp);
         console.log("in reducer error",temp.payload.response.status);
         newState.status=temp.payload.response.status;
+        newState.message=temp.payload.response.data;
+
         console.log(newState);
         
     }

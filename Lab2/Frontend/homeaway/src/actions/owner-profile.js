@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const OWNER_PROFILE = "get_traveler_profile";
 export const OWNER_PROFILE_ERROR = "traveler_profile_error";
 
@@ -16,6 +18,7 @@ function getSuccess(response) {
   }
 
 function get_owner_profile(emailaddress){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
 
     //middleware call
   //receive response from backend

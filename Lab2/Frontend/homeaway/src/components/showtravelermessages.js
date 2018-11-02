@@ -18,13 +18,26 @@ class ShowTravelerMessages extends Component {
         this.state={
             reply:this.props.message.reply,
             error:"",
-            status:null
+            status:null,
+            display:false,
+            sendreply:""
         }
 this.reply=this.reply.bind(this);
 this.sendReply=this.sendReply.bind(this);
-    }
+this.displaybox=this.displaybox.bind(this) 
+this.sendreply=this.sendreply.bind(this);
 
-
+}
+sendreply(e){
+    this.setState({
+        sendReply:e.target.value
+    })
+}
+displaybox(){
+    this.setState({
+        displaybox:true
+    })
+}
     reply(e){
             this.setState({
                 reply:e.target.value
@@ -64,11 +77,11 @@ this.setState({
     render() {
         //console.log("trips", this.state.properties);
         //console.log(this.state.dataavailable);
-        let dis=this.props.message.reply=="" || this.state.status==200?<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto"  type="text" placeholder="input here..." value={this.state.reply} />:<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto"  type="text" placeholder="input here..." value={this.state.reply} disabled/>
-        let butondis=<button onClick={this.sendReply}><img style={{height:"40px"}} src={Logo2}></img></button>;
-
-
+        let dis=this.props.message.reply=="" || this.state.status==200?<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto"  type="text" placeholder="input here..." value={this.state.reply} disabled/>:<input style={{width:"100%",borderRadius:"12px"}} className="form-control" id="replyto"  type="text" placeholder="input here..." value={this.state.reply} disabled/>
+        let butondis=null
+        //<button onClick={this.displaybox}>Reply to this message</button>
         
+        //let box=this.state.displaybox==true?<input style={{width:"100%",borderRadius:"12px"}} className="form-control" type="text" placeholder="input here..."  />:null;
         
         
         return (

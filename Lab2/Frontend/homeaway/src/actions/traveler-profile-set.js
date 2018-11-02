@@ -1,4 +1,7 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
+
 export const TRAVELER_PROFILE_SET = "set_traveler_profile";
 export const TRAVELER_PROFILE_SET_ERROR = "set_traveler_profile_error";
 
@@ -16,6 +19,8 @@ function getSuccess(response) {
   }
 
 function set_traveler_profile(formdata){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
+
     for (var pair of formdata.entries()) {
         console.log(pair[0]+ ', ' + pair[1]); 
     }

@@ -23,6 +23,7 @@ import jwt from 'jsonwebtoken' ;
 
 class DetailsView extends Component {
 constructor(props){
+    
   super(props);
   this.state={
       property_id:this.props.match.params.propid,
@@ -34,7 +35,8 @@ constructor(props){
       guests:this.props.match.params.guests,
       loginstatus:"loggedin",
       bookingstatus:null,
-      isOpen: false
+      isOpen: false,
+     
 
   }
   this.setStart=this.setStart.bind(this);
@@ -42,8 +44,7 @@ constructor(props){
   this.setGuests=this.setGuests.bind(this);
   this.bookthisproperty=this.bookthisproperty.bind(this);
   this.postquestion=this.postquestion.bind(this);
-  this.setfname=this.setfname.bind(this);
-  this.setlname=this.setlname.bind(this);
+  
   this.setemail=this.setemail.bind(this);
   this.setmessage=this.setmessage.bind(this);
   
@@ -51,9 +52,9 @@ constructor(props){
 }
 
 componentWillReceiveProps(nextProps){
+    let token=jwt.decode(localStorage.getItem('jwttoken'))
     this.setState({
-        fname:"",
-        lname:"",
+        
         emailaddress:"",
         message:"",
         property_detail:nextProps.property_detail,
@@ -120,16 +121,16 @@ console.log("in booking");
 
 
 }
-setfname(e){
-    this.setState({
-        fname:e.target.value
-    })
-}
-setlname(e){
-    this.setState({
-        lname:e.target.value
-    })
-}
+// setfname(e){
+//     this.setState({
+//         fname:e.target.value
+//     })
+// }
+// setlname(e){
+//     this.setState({
+//         lname:e.target.value
+//     })
+// }
 setemail(e){
     this.setState({
         emailaddress:e.target.value
@@ -142,9 +143,10 @@ setmessage(e){
 }
 postquestion(e){
     e.preventDefault();
+    let token=jwt.decode(localStorage.getItem('jwtToken'));
     var data={
-        firstName:this.state.fname,
-        lastName:this.state.lname,
+        firstName:token.firstName,
+        lastName:token.lastName,
         contactno:this.state.emailaddress,
         message:this.state.message,
         owner:this.state.property_detail.username,
@@ -152,6 +154,7 @@ postquestion(e){
        
 
     }
+    window.alert("Question has been sent to owner");
     this.props.post_question(data);
 
 }
@@ -214,7 +217,7 @@ this.props.fetch_detailsview(this.state.property_id);
           </div>);
       }
 
-      
+      let askquestionlabel=!token||token.UserType=='owner'?<label id="loginmsg"> Traveler please Login ask a question</label>:null;
       let question=null;
       if(this.state.isOpen==true){
         question=(
@@ -231,22 +234,7 @@ this.props.fetch_detailsview(this.state.property_id);
 <table>
 <tbody>
 <tr>
-<td className="first">
-<span className="form-group">
-
-
-    <input type="text" className="form-control" id="inputFirstName" placeholder="First Name"  onChange={this.setfname} required/>
-
-</span>
-</td>
-    <td>
-<span className="form-group">
-
-    <input type="text" className="form-control" id="inputLastName" placeholder="LastName" onChange={this.setlname} required/>
-
-</span>
-</td>
-</tr>
+ </tr>
 </tbody>
 </table>
 </div>
@@ -457,12 +445,15 @@ this.props.fetch_detailsview(this.state.property_id);
         
         <label id="loginmsg">{loginmessage}</label>
         <label id="loginmsg">{this.state.bookingstatus}</label>
+        {askquestionlabel}
+
                 </div>
             </div>
                     </div>
                     
                     </div><br/>
                     {buttonques}
+                    
                     <div>
                     
                     {question}

@@ -18,6 +18,7 @@ var uuidv4 = require('uuid/v4');
 var traveler = require('../models/traveler');
 var listing = require('../models/property');
 
+var requireAuth = passport.authenticate('jwt', {session: false});
 
 var kafka = require('../kafka/client');
 
@@ -100,7 +101,7 @@ var obj={
 
 
 
-router.get('/getlisting', function(req,res){
+router.get('/getlisting',function(req,res){
     console.log("in get listing");
     console.log("cbcb",req.query.property_id);
     var id=req.query.property_id;
@@ -135,7 +136,7 @@ kafka.make_request('details_view',obj, function(err,results){
 
 
 
-router.post('/bookproperty', function (req, res) {
+router.post('/bookproperty', requireAuth,function (req, res) {
     console.log("Inside Booking Request Handler");
     var emailaddress = req.body.username;
     console.log(req.body.property_id);
@@ -182,7 +183,7 @@ router.post('/bookproperty', function (req, res) {
 
 
 //Get booked Travelers for a property
-router.get('/getpropertytravelers', function (req, res) {
+router.get('/getpropertytravelers', requireAuth,function (req, res) {
     console.log("Inside get property travelers Request Handler");
     var property_id = req.query.property_id;
     console.log(property_id);
@@ -264,5 +265,11 @@ kafka.make_request('property_travelers',obj, function(err,results){
 
 
 });
+
+
+// router.get('/getggg', requireAuth,function (req, res) {
+// res.end("Response recieved")
+// })
+
 
 module.exports=router;

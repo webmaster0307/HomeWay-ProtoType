@@ -1,6 +1,6 @@
 import axios from 'axios';
-
-
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const OWNER_SIGN_UP = "owner_signup";
 export const OWNER_SIGNUP_ERROR = "ownerSignUp_error";
 //traveler login action

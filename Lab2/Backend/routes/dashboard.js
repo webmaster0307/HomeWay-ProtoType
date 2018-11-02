@@ -18,12 +18,13 @@ var uuidv4 = require('uuid/v4');
 var traveler = require('../models/traveler');
 var listing = require('../models/property');
 
+var requireAuth = passport.authenticate('jwt', {session: false});
 
 var kafka = require('../kafka/client');
 
 const router=express.Router();
 
-router.get('/ownerproperties', function(req,res){
+router.get('/ownerproperties',requireAuth,function(req,res){
     console.log("in fetch owner properties");
     var owner=req.query.username;
 
@@ -56,7 +57,7 @@ kafka.make_request('my_properties',obj, function(err,results){
 })
 
 //fetch properties for trips
-router.get('/mytrips', function(req,res){
+router.get('/mytrips',requireAuth,function(req,res){
     console.log("in fetch trips");
     console.log(req.query.username);
     var username=req.query.username;

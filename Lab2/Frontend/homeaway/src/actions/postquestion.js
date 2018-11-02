@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const POST_QUESTION = "post_question";
 export const POST_QUESTION_ERROR = "post_question_error";
 
@@ -16,6 +18,7 @@ function getSuccess(response) {
   }
 
 function post_question(data){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
 
     //middleware call
   //receive response from backend

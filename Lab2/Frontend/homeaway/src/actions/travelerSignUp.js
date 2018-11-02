@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 
 export const TRAVELER_SIGN_UP = "traveler_signup";
 export const TRAVELER_SIGNUP_ERROR = "travelerSignUp_error";

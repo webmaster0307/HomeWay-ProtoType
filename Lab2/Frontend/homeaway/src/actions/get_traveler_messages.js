@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const GET_TRAVELER_MESSAGES = "get_traveler_messages";
 export const GET_TRAVELER_MESSAGES_ERROR = "get_traveler_messages_error";
 
@@ -16,6 +18,7 @@ function getSuccess(response) {
   }
 
 function get_traveler_messages(data){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
 
     //middleware call
   //receive response from backend

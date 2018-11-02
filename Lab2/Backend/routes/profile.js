@@ -16,12 +16,13 @@ var morgan = require('morgan');
 var passport = require('passport');
 var uuidv4 = require('uuid/v4');
 var traveler = require('../models/traveler');
-
+var jwt = require('jsonwebtoken');
 var kafka = require('../kafka/client');
+var requireAuth = passport.authenticate('jwt', {session: false});
 
 const router=express.Router();
 
-router.get('/gettravelerprofile',function (req, res) {
+router.get('/gettravelerprofile',requireAuth,function (req, res) {
 
     console.log("Inside Traveler Profile Get Request");
     var emailaddress=req.query.emailaddress;
@@ -153,7 +154,7 @@ router.get('/gettravelerprofile',function (req, res) {
 });
 
 
-router.get('/getownerprofile', function (req, res) {
+router.get('/getownerprofile',requireAuth, function (req, res) {
 
     console.log("Inside Traveler Profile Get Request");
     var emailaddress = req.query.username;

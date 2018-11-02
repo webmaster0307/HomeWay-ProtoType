@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const BOOK_PROPERTY = "book_new_property";
 export const BOOK_PROPERTY_ERROR = "book_property_error";
 
@@ -16,6 +18,7 @@ function getSuccess(response) {
   }
 
 function book_property(data){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
 
     //middleware call
   //receive response from backend

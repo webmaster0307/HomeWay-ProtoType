@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const PROPERTY_LOCATION = "add_property_location";
 export const PROPERTY_DETAILS = "add_property_details";
 export const PROPERTY_PHOTOS= "add_property_photos";
@@ -46,6 +48,8 @@ export const set_step=(step)=>{
 }
 
 export const post_property_to_db=(data)=>{
+    setAuthorizationToken(localStorage.getItem('jwtToken'));
+
     return dispatch => {
         // var photos = [];
         // for(let pair of data.entries()) {

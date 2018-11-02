@@ -1,4 +1,6 @@
 import axios from 'axios';
+import setAuthorizationToken from '../utils/setAuthorizationToken'
+import jwt from 'jsonwebtoken';
 export const GET_OWNER_PROPERTIES = "get_owner_properties";
 export const GET_OWNER_PROPERTIES_ERROR = "get_owner_properties_error";
 
@@ -16,6 +18,8 @@ function getError(response) {
   }
 
 function get_owner_properties(emailaddress){
+  setAuthorizationToken(localStorage.getItem('jwtToken'));
+
 console.log("action called");
     //middleware call
   //receive response from backend

@@ -24,7 +24,7 @@ function handle_request(msg, callback){
     traveler.find({emailaddress:msg.emailaddress,"UserType":"traveler"}).then((doc)=>{
         console.log(doc);
         if(doc.length!=0){
-            callback(null,"Error");
+            callback(null,[]);
         }else{
             var trav=new traveler({
                 UserType:'traveler',
@@ -44,14 +44,14 @@ function handle_request(msg, callback){
             })
         
             trav.save().then((doc)=>{
-                callback(doc,null);
+                callback(null,doc);
             },(e)=>{
-                callback(null,"Error");
+                callback(null,[]);
             })
         }
         
     }).catch((e)=>{
-        callback(null,"Error");
+        callback(null,[]);
      // })
     })
 

@@ -16,7 +16,10 @@ var My_Trips=require('./services/my_trips.js')
 var My_Properties=require('./services/my_properties')
 var Property_Travelers=require('./services/property_travelers')
 var Post_Property=require('./services/post_property')
-
+var Post_Question=require('./services/postquestion')
+var Get_Owner_Messages=require('./services/getownermessages')
+var Get_Traveler_Messages=require('./services/gettravelermessages')
+var Reply_To_Message=require('./services/replytomessage')
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
     var consumer = connection.getConsumer(topic_name);
@@ -65,3 +68,7 @@ handleTopicRequest("property_travelers",Property_Travelers)
 handleTopicRequest("post_property",Post_Property)
 handleTopicRequest("traveler_sign_up",Traveler_Sign_Up)
 handleTopicRequest("owner_sign_up",Owner_Sign_Up)
+handleTopicRequest("post_question",Post_Question)
+handleTopicRequest("get_owner_messages",Get_Owner_Messages)
+handleTopicRequest("get_traveler_messages",Get_Traveler_Messages)
+handleTopicRequest("reply_to_message",Reply_To_Message)

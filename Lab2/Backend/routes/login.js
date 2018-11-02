@@ -271,12 +271,22 @@ router.post('/signup', function (req, res) {
         }else{
             console.log("Inside else");
             console.log("Results",results);
+            if(results.length==0){
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("User already exists");
+            }else{
+            console.log("Inside else");
+            console.log("Results",results);
             
             res.writeHead(200, {
                 'Content-Type': 'text/plain'
             })
             res.end('User successfully added');
             }
+        }
         
     });
     
@@ -389,12 +399,21 @@ router.post('/ownersignup', function (req, res) {
         }else{
             console.log("Inside else");
             console.log("Results",results);
-            
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            })
-            res.end('User successfully added');
+            if(results.length==0){
+                res.writeHead(400, {
+                    'Content-Type': 'text/plain'
+                })
+    
+                res.end("User already exists");
+            }else{
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain'
+                })
+                res.end('User successfully added');
+                }
             }
+            
+            
         
     });
     

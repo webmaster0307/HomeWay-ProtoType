@@ -23,6 +23,7 @@ var question = require('./models/question');
 var routes=require('./routes/login.js');
 var profile_routes=require('./routes/profile.js');
 var dashboard_routes=require('./routes/dashboard.js');
+var messaging=require('./routes/messaging.js');
 
 var property_routes=require('./routes/property.js');
 var jwt = require('jsonwebtoken');
@@ -132,11 +133,12 @@ app.use(express.static(path.join(__dirname,'/uploads')));
  app.use(profile_routes);
  app.use(property_routes);
  app.use(dashboard_routes);
+ app.use(messaging);
 //fetch properties for details view
 
 
 //Profile Post
-app.post('/addprofile',upload.single('photo'), function (req, res) {
+app.post('/addprofile',requireAuth,upload.single('photo'), function (req, res) {
     
    
     console.log("Inside Profile Request Handler");
@@ -417,129 +419,225 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
 
 
     })
-//Profile Post for owner
-app.post('/postquestion', function (req, res) {
+// //Profile Post for owner
+// app.post('/postquestion', function (req, res) {
     
    
-    console.log("Inside Post Question Request Handler");
-//console.log(JSON.stringify(req.body));
+//     console.log("Inside Post Question Request Handler");
+// //console.log(JSON.stringify(req.body));
 
-console.log("Res 1: ",req.body);
+// //console.log("Res 1: ",req.body);
 
-var q=new question({
-    firstName:req.body.firstName,
-    lastName:req.body.lastName,
-    emailaddress:req.body.emailaddress,
-    message:req.body.message,
-    owner:req.body.owner,
-    contactno:req.body.contactno,
-    reply:""
+// // var q=new question({
+// //     firstName:req.body.firstName,
+// //     lastName:req.body.lastName,
+// //     emailaddress:req.body.emailaddress,
+// //     message:req.body.message,
+// //     owner:req.body.owner,
+// //     contactno:req.body.contactno,
+// //     reply:""
 
    
     
 
-})
+// // })
 
-q.save().then((doc)=>{
+// // q.save().then((doc)=>{
     
-console.log("ques",doc);
-res.writeHead(200, {
-    'Content-Type': 'text/plain'
-})
-res.end("Message sent to owner");
-}).catch((e)=>{
-    res.writeHead(400, {
-        'Content-Type': 'text/plain'
-    })
-    res.end("Error in sending message");
-})
-
-});
+// // console.log("ques",doc);
+// // res.writeHead(200, {
+// //     'Content-Type': 'text/plain'
+// // })
+// // res.end("Message sent to owner");
+// // }).catch((e)=>{
+// //     res.writeHead(400, {
+// //         'Content-Type': 'text/plain'
+// //     })
+// //     res.end("Error in sending message");
+// // })
 
 
+// kafka.make_request('post_question',req.body, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
 
-
-app.get('/getownermessages', function (req, res) {
+//         res.end("Error while fetching trips");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
+//         res.end("Question Posted successfully");
+//         }
     
-   
-    console.log("Inside Post Question Request Handler");
-//console.log(JSON.stringify(req.body));
+// });
 
-console.log("Res 1: ",req.body);
-var owner=req.query.owner;
-
-
-question.find({owner:owner}).then((doc)=>{
-    
-console.log("ques",doc);
-res.writeHead(200, {
-    'Content-Type': 'application/json'
-})
-res.end(JSON.stringify(doc));
-}).catch((e)=>{
-    res.writeHead(400, {
-        'Content-Type': 'text/plain'
-    })
-    res.end("Error in sending message");
-})
-
-});
+// });
 
 
 
-app.post('/replytomessage', function (req, res) {
+
+// app.get('/getownermessages', function (req, res) {
     
    
-    console.log("Inside Post Question Request Handler");
-//console.log(JSON.stringify(req.body));
+//     console.log("Inside Post Question Request Handler");
+// //console.log(JSON.stringify(req.body));
 
-console.log("Res 1: ",req.body);
+// console.log("Res 1: ",req.body);
+// var owner=req.query.owner;
+// var obj={
+//     owner:owner
+// }
+
+// // question.find({owner:owner}).then((doc)=>{
+    
+// // console.log("ques",doc);
+// // res.writeHead(200, {
+// //     'Content-Type': 'application/json'
+// // })
+// // res.end(JSON.stringify(doc));
+// // }).catch((e)=>{
+// //     res.writeHead(400, {
+// //         'Content-Type': 'text/plain'
+// //     })
+// //     res.end("Error in sending message");
+// // })
 
 
-question.findOneAndUpdate({_id:req.body.message_id},{$set:{reply:req.body.reply}},{new:true})
-    .then((doc)=>{
-        console.log("update doc",doc);
 
-res.writeHead(200, {
-    'Content-Type': 'text/plain'
-})
-res.end("Message sent to owner");
-}).catch((e)=>{
-    res.writeHead(400, {
-        'Content-Type': 'text/plain'
-    })
-    res.end("Error in sending message");
-})
+// kafka.make_request('get_owner_messages',obj, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
 
-});
+//         res.end("Error in getting owner messages");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
+//         res.end(JSON.stringify(results));
+//         }
+    
+// });
 
 
 
-app.get('/gettravelermessages', function (req, res) {
+
+// });
+
+
+
+// app.post('/replytomessage', function (req, res) {
     
    
-    console.log("Inside get owner replies");
-//console.log(JSON.stringify(req.body));
+//     console.log("Inside Post Question Request Handler");
+// //console.log(JSON.stringify(req.body));
 
-console.log("Res 1: ",req.body);
-var traveler=req.query.emailaddress;
+// console.log("Res 1: ",req.body);
 
 
-question.find({emailaddress:traveler}).then((doc)=>{
+// // question.findOneAndUpdate({_id:req.body.message_id},{$set:{reply:req.body.reply}},{new:true})
+// //     .then((doc)=>{
+// //         console.log("update doc",doc);
+
+// // res.writeHead(200, {
+// //     'Content-Type': 'text/plain'
+// // })
+// // res.end("Message sent to owner");
+// // }).catch((e)=>{
+// //     res.writeHead(400, {
+// //         'Content-Type': 'text/plain'
+// //     })
+// //     res.end("Error in sending message");
+// // })
+
+
+// kafka.make_request('reply_to_message',req.body, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
+//         res.end("Error in sending message");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'text/plain'
+//         })
+//         res.end("Message sent to owner");
+//         }
     
-console.log("ques",doc);
-res.writeHead(200, {
-    'Content-Type': 'application/json'
-})
-res.end(JSON.stringify(doc));
-}).catch((e)=>{
-    res.writeHead(400, {
-        'Content-Type': 'text/plain'
-    })
-    res.end("Error in retrieving messages");
-})
+// });
 
-});
+
+// });
+
+
+
+// app.get('/gettravelermessages', function (req, res) {
+    
+   
+//     console.log("Inside get owner replies");
+// //console.log(JSON.stringify(req.body));
+
+// console.log("Res 1: ",req.body);
+// var traveler=req.query.emailaddress;
+// var obj={
+//     traveler:traveler
+// }
+
+// // question.find({emailaddress:traveler}).then((doc)=>{
+    
+// // console.log("ques",doc);
+// // res.writeHead(200, {
+// //     'Content-Type': 'application/json'
+// // })
+// // res.end(JSON.stringify(doc));
+// // }).catch((e)=>{
+// //     res.writeHead(400, {
+// //         'Content-Type': 'text/plain'
+// //     })
+// //     res.end("Error in retrieving messages");
+// // })
+
+
+// kafka.make_request('get_traveler_messages',obj, function(err,results){
+//     console.log('in result');
+//     console.log(results);
+//     if (err){
+//         console.log("Inside err");
+//         res.writeHead(400, {
+//             'Content-Type': 'text/plain'
+//         })
+
+//         res.end("Error in getting traveler messages");
+//     }else{
+//         console.log("Inside else");
+//         console.log("Results",results);
+//         res.writeHead(200, {
+//             'Content-Type': 'application/json'
+//         })
+//         res.end(JSON.stringify(results));
+//         }
+    
+// });
+
+// });
 
 
     app.listen(3001);
