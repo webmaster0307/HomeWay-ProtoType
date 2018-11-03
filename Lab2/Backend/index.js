@@ -103,7 +103,7 @@ const storage = multer.diskStorage({
     }
     });
 //use cors to allow cross origin resource sharing
-app.use(cors({ origin: 'http://13.56.34.137:3000', credentials: true }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(session({
     secret: 'CMPEHomeaway273',
@@ -117,7 +117,7 @@ app.use(bodyParser.json());
 
 //Allow Access Control
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://13.56.34.137:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
@@ -356,42 +356,6 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
         mysql.escape(req.body.publicinfo) + ", " + mysql.escape(req.body.propertytype) + " , " + mysql.escape(req.body.bedrooms) + ", " + mysql.escape(req.body.accomodates) + ", " + mysql.escape(req.body.bathrooms) + ", " + mysql.escape(req.body.start) + ", " + mysql.escape(req.body.end) + ", " + mysql.escape(req.body.currency) + ", " + mysql.escape(req.body.rate) + ", " + mysql.escape(req.body.nights) + ", " + mysql.escape(req.body.username) + ", " + mysql.escape(fileNames) + ") ";
 
 
-        // let start=new Date(req.body.start);
-        // let end=new Date(req.body.end);
-
-        
-        // let accomodates=Number(req.body.accomodates);
-       
-        // var prop=new listing({
-           
-        //     address:req.body.address,
-        //     headline:req.body.headline,
-        //     publicinfo:req.body.publicinfo,
-        //     propertytype:req.body.propertytype,
-        //     bedrooms:req.body.bedrooms,
-        //     accomodates:accomodates,
-        //    bathrooms:req.body.bathrooms,
-        //     start:start,
-        //     end:end,
-        //     currency:req.body.currency,
-        //     rate:req.body.rate,
-        //     nights:req.body.nights,
-        //     username:req.body.username,
-        //     fileNames:fileNames
-
-        // })
-    
-        // prop.save().then((doc)=>{
-        //     console.log("Prop",doc);
-        //     res.writeHead(200, {
-        //         'Content-Type': 'text/plain'})
-        //          res.end('User successfully added');
-        // },(e)=>{
-        //     res.writeHead(400, {
-        //         'Content-Type': 'text/plain'})
-        //         res.end("Unabele to save property");
-        // })
-     // })
 
      req.body.fileNames=fileNames;
      kafka.make_request('post_property',req.body, function(err,results){
@@ -419,225 +383,6 @@ app.post('/postproperty',uploadProperties.array('photos'),function (req, res) {
 
 
     })
-// //Profile Post for owner
-// app.post('/postquestion', function (req, res) {
-    
-   
-//     console.log("Inside Post Question Request Handler");
-// //console.log(JSON.stringify(req.body));
-
-// //console.log("Res 1: ",req.body);
-
-// // var q=new question({
-// //     firstName:req.body.firstName,
-// //     lastName:req.body.lastName,
-// //     emailaddress:req.body.emailaddress,
-// //     message:req.body.message,
-// //     owner:req.body.owner,
-// //     contactno:req.body.contactno,
-// //     reply:""
-
-   
-    
-
-// // })
-
-// // q.save().then((doc)=>{
-    
-// // console.log("ques",doc);
-// // res.writeHead(200, {
-// //     'Content-Type': 'text/plain'
-// // })
-// // res.end("Message sent to owner");
-// // }).catch((e)=>{
-// //     res.writeHead(400, {
-// //         'Content-Type': 'text/plain'
-// //     })
-// //     res.end("Error in sending message");
-// // })
-
-
-// kafka.make_request('post_question',req.body, function(err,results){
-//     console.log('in result');
-//     console.log(results);
-//     if (err){
-//         console.log("Inside err");
-//         res.writeHead(400, {
-//             'Content-Type': 'text/plain'
-//         })
-
-//         res.end("Error while fetching trips");
-//     }else{
-//         console.log("Inside else");
-//         console.log("Results",results);
-//         res.writeHead(200, {
-//             'Content-Type': 'application/json'
-//         })
-//         res.end("Question Posted successfully");
-//         }
-    
-// });
-
-// });
-
-
-
-
-// app.get('/getownermessages', function (req, res) {
-    
-   
-//     console.log("Inside Post Question Request Handler");
-// //console.log(JSON.stringify(req.body));
-
-// console.log("Res 1: ",req.body);
-// var owner=req.query.owner;
-// var obj={
-//     owner:owner
-// }
-
-// // question.find({owner:owner}).then((doc)=>{
-    
-// // console.log("ques",doc);
-// // res.writeHead(200, {
-// //     'Content-Type': 'application/json'
-// // })
-// // res.end(JSON.stringify(doc));
-// // }).catch((e)=>{
-// //     res.writeHead(400, {
-// //         'Content-Type': 'text/plain'
-// //     })
-// //     res.end("Error in sending message");
-// // })
-
-
-
-// kafka.make_request('get_owner_messages',obj, function(err,results){
-//     console.log('in result');
-//     console.log(results);
-//     if (err){
-//         console.log("Inside err");
-//         res.writeHead(400, {
-//             'Content-Type': 'text/plain'
-//         })
-
-//         res.end("Error in getting owner messages");
-//     }else{
-//         console.log("Inside else");
-//         console.log("Results",results);
-//         res.writeHead(200, {
-//             'Content-Type': 'application/json'
-//         })
-//         res.end(JSON.stringify(results));
-//         }
-    
-// });
-
-
-
-
-// });
-
-
-
-// app.post('/replytomessage', function (req, res) {
-    
-   
-//     console.log("Inside Post Question Request Handler");
-// //console.log(JSON.stringify(req.body));
-
-// console.log("Res 1: ",req.body);
-
-
-// // question.findOneAndUpdate({_id:req.body.message_id},{$set:{reply:req.body.reply}},{new:true})
-// //     .then((doc)=>{
-// //         console.log("update doc",doc);
-
-// // res.writeHead(200, {
-// //     'Content-Type': 'text/plain'
-// // })
-// // res.end("Message sent to owner");
-// // }).catch((e)=>{
-// //     res.writeHead(400, {
-// //         'Content-Type': 'text/plain'
-// //     })
-// //     res.end("Error in sending message");
-// // })
-
-
-// kafka.make_request('reply_to_message',req.body, function(err,results){
-//     console.log('in result');
-//     console.log(results);
-//     if (err){
-//         console.log("Inside err");
-//         res.writeHead(400, {
-//             'Content-Type': 'text/plain'
-//         })
-//         res.end("Error in sending message");
-//     }else{
-//         console.log("Inside else");
-//         console.log("Results",results);
-//         res.writeHead(200, {
-//             'Content-Type': 'text/plain'
-//         })
-//         res.end("Message sent to owner");
-//         }
-    
-// });
-
-
-// });
-
-
-
-// app.get('/gettravelermessages', function (req, res) {
-    
-   
-//     console.log("Inside get owner replies");
-// //console.log(JSON.stringify(req.body));
-
-// console.log("Res 1: ",req.body);
-// var traveler=req.query.emailaddress;
-// var obj={
-//     traveler:traveler
-// }
-
-// // question.find({emailaddress:traveler}).then((doc)=>{
-    
-// // console.log("ques",doc);
-// // res.writeHead(200, {
-// //     'Content-Type': 'application/json'
-// // })
-// // res.end(JSON.stringify(doc));
-// // }).catch((e)=>{
-// //     res.writeHead(400, {
-// //         'Content-Type': 'text/plain'
-// //     })
-// //     res.end("Error in retrieving messages");
-// // })
-
-
-// kafka.make_request('get_traveler_messages',obj, function(err,results){
-//     console.log('in result');
-//     console.log(results);
-//     if (err){
-//         console.log("Inside err");
-//         res.writeHead(400, {
-//             'Content-Type': 'text/plain'
-//         })
-
-//         res.end("Error in getting traveler messages");
-//     }else{
-//         console.log("Inside else");
-//         console.log("Results",results);
-//         res.writeHead(200, {
-//             'Content-Type': 'application/json'
-//         })
-//         res.end(JSON.stringify(results));
-//         }
-    
-// });
-
-// });
 
 
     app.listen(3001);
