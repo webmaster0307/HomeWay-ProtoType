@@ -14,9 +14,9 @@ class SearchProperty extends Component{
 constructor(props){
     super(props)
     this.state={
-        location:"San Francisco",
-        start:'2018-09-03',
-        end:"2018-09-26",
+        location:"San",
+        start:'2018-10-03',
+        end:"2018-10-20",
         guests:2
     };
 

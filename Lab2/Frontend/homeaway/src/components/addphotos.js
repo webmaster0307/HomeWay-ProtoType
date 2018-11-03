@@ -70,6 +70,8 @@ console.log("images droppeed",images);
             })
           });
 
+          window.alert("Photo added successfully");
+
     }else{
         alert("U can upload maximum of 5 files");
     }

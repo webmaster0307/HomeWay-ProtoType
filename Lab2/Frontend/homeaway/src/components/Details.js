@@ -245,12 +245,10 @@ console.log("startfil",this.state.filterstart);
 <div className="form-group row" style={{paddingLeft:"100px"}}>
 <img src={filter} style={{width:"120px",height:"60px"}}></img>
 <div className="col-md-3"><input type="text" class="form-control" name="location" placeholder="Where do you want to go?" onChange={this.filterloc}/></div>&nbsp;&nbsp;
-<div className="col-md-1" style={{paddingRight:"30px"}}><input type="date" className="form-control date" name="start" placeholder="Arrive" onChange={this.filterstart}/></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<div className="col-md-1"><input type="date" className="form-control date" name="end" placeholder="Depart" onChange={this.filterend}/></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <div className="col-md-2" style={{paddingLeft:"30px"}}><input type="number" className="form-control " name="bed" placeholder="Bedrooms" onChange={this.filterbed}/></div>
 <div class="col-md-2">
   <input type="range" min="100" max="1000"  class="slider" id="myRange" onChange={this.setfilterprice} defaultValue='1000'/>
-  <p>Price: {this.state.filterprice}<span id="demo"></span></p>
+  <p>Price: ${this.state.filterprice}<span id="demo"></span></p>
 </div>
 </div>
       {this.state.message}

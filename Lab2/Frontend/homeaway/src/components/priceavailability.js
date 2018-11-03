@@ -68,9 +68,9 @@ class PriceAndAvailability extends Component {
     }
 
     nextstep = (e) => {
-        console.log("In next Step");
+        console.log("In next Step price and availability");
         e.preventDefault();
-        
+        console.log("-----------",this.state.propertytype);
         var token=jwt.decode(localStorage.getItem('jwtToken'))
         let property= new FormData();
         property.append("address",this.state.address);

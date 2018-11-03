@@ -67,7 +67,7 @@ class  PropertyDetails extends Component{
 
     nextstep = (e) => {
         console.log("In next Step");
-        
+
         let d = {
 
             headline: this.state.headline,
