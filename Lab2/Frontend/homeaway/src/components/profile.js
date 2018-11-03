@@ -20,18 +20,18 @@ class Profile extends Component {
   constructor(props){
     super(props);
     this.state={
-      firstname:this.props?this.props.firstname:"",
-      lastname:this.props?this.props.lastname:"",
-      aboutme:this.props?this.props.aboutme:"",
-      citycountry:this.props?this.props.citycountry:"",
-      company:this.props?this.props.company:"",
-      school:this.props?this.props.school:"",
-      hometown:this.props?this.props.hometown:"",
-      languagues:this.props?this.props.languages:"",
-      gender:this.props?this.props.gender:"",
-      photo:this.props?this.props.photo:"",
-      display:this.props?this.props.display:"",
-      status:this.props?this.props.status:""
+      firstname:"",
+      lastname:"",
+      aboutme:"",
+      citycountry:"",
+      company:"",
+      school:"",
+      hometown:"",
+      languagues:"",
+      gender:"",
+      photo:"",
+      display:"",
+      status:""
 
     }
 
