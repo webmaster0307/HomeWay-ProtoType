@@ -49,7 +49,7 @@ this.setState({
     e:"error while replying"
 })
         })
-        window.alert("Reply has been sent to owner");
+        window.alert("Reply has been sent to traveler");
 
     }
 
