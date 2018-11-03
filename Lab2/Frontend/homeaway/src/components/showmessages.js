@@ -5,6 +5,8 @@ import Logo from '../../src/avatar_2x.png';
 import Logo2 from '../../src/2d97d2a8-a05e-4979-bf35-10ad17075324.png';
 import expedia from '../../src/birdhouse-bceheader.svg';
 import axios from 'axios';
+import rootURL from '../config.js';
+
 import cookie from 'react-cookies';
 
 
@@ -38,7 +40,7 @@ this.sendReply=this.sendReply.bind(this);
             reply:this.state.reply
         }
 
-        axios.post('http://localhost:3001/replytomessage',data).then((res)=>{
+        axios.post(rootURL+'/replytomessage',data).then((res)=>{
             this.setState({
                 status:200
             })

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
+
 export const FETCH_PROPERTIES = "fetch_properties";
 export const FETCH_PROPERTIES_ERROR = "fetch_properties_error";
 
@@ -25,7 +27,7 @@ function fetch_properties(start,end,location,guests){
   return function(dispatch) {
   
   
-    axios.get('http://localhost:3001/fetchproperties',{ params:{
+    axios.get(rootURL+'/fetchproperties',{ params:{
        
         start: start,
         end:end,

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
+
 export const GET_TRAVELER_MESSAGES = "get_traveler_messages";
 export const GET_TRAVELER_MESSAGES_ERROR = "get_traveler_messages_error";
 
@@ -25,7 +27,7 @@ function get_traveler_messages(data){
   return function(dispatch) {
   
   
-    axios.get('http://localhost:3001/gettravelermessages',{params:{emailaddress:data
+    axios.get(rootURL+'/gettravelermessages',{params:{emailaddress:data
 }}).then(res=>{
         console.log("Get t Action",res);
         

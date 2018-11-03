@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 
 export const OWNER_PROFILE_SET = "set_traveler_profile";
 export const OWNER_PROFILE_SET_ERROR = "set_traveler_profile_error";
@@ -26,7 +27,7 @@ function set_owner_profile(formdata){
   return function(dispatch) {
   
   
-    axios.post('http://localhost:3001/addprofileowner',formdata).then(res=>{
+    axios.post(rootURL+'/addprofileowner',formdata).then(res=>{
         console.log("Set t Action",res);
         
     dispatch(

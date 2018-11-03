@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 export const GET_TRAVELERS = "get_travelers";
 export const GET_TRAVELERS_ERROR = "get_travelers_error";
 
@@ -26,7 +27,7 @@ console.log("action called");
   return function(dispatch) {
   
   
-    axios.get("http://localhost:3001/getpropertytravelers",{ params: {
+    axios.get(rootURL+"/getpropertytravelers",{ params: {
         property_id:property_id
 
     }}).then(res=>{

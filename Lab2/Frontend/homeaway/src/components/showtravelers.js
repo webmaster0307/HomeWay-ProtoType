@@ -7,6 +7,8 @@ import { connect } from "react-redux";
 import get_travelers from '../actions/showtravelers.js'
 import cookie from 'react-cookies';
 import Traveler from './traveler';
+import rootURL from '../config.js';
+
 
 
 
@@ -80,7 +82,7 @@ componentDidMount(){
       <div className="row ">
         <div className="col-md-4">
           
-            <img src={`http://localhost:3001/${this.props.match.params.imageName}`} className="w-100"/>
+            <img src={`${rootURL}/${this.props.match.params.imageName}`} className="w-100"/>
 
           </div>
           <div className="col-md-8 px-3">

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
+
 export const FETCH_MY_TRIPS = "fetch_my_trips";
 export const FETCH_MY_TRIPS_ERROR = "fetch_my_trips_error";
 
@@ -25,7 +27,7 @@ function fetch_mytrips(username){
   return function(dispatch) {
   
   
-    axios.get("http://localhost:3001/mytrips",{ params: {
+    axios.get(rootURL+"/mytrips",{ params: {
         username:username
         
       }}).then(res=>{

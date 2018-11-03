@@ -5,6 +5,8 @@ import Logo from '../../src/avatar_2x.png';
 import Logo2 from '../../src/2d97d2a8-a05e-4979-bf35-10ad17075324.png';
 import expedia from '../../src/birdhouse-bceheader.svg';
 import axios from 'axios';
+import rootURL from '../config.js';
+
 import cookie from 'react-cookies';
 
 
@@ -62,7 +64,7 @@ displaybox(){
         //     reply:this.state.reply
         // }
 
-        axios.post('http://localhost:3001/postquestion',data).then((res)=>{
+        axios.post(rootURL+'/postquestion',data).then((res)=>{
             this.setState({
                 status:200
             })

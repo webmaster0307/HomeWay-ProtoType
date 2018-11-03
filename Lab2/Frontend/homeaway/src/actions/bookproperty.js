@@ -1,6 +1,8 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
+
 export const BOOK_PROPERTY = "book_new_property";
 export const BOOK_PROPERTY_ERROR = "book_property_error";
 
@@ -25,7 +27,7 @@ function book_property(data){
   return function(dispatch) {
   
   
-    axios.post('http://localhost:3001/bookproperty',data).then(res=>{
+    axios.post(rootURL+"/bookproperty",data).then(res=>{
         console.log("Get t Action",res);
         
     dispatch(

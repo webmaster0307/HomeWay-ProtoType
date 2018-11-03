@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 //import cookie from 'react-cookies'
 
 export const OWNER_LOGIN = "owner_login";
@@ -27,7 +28,7 @@ function owner_login(values){
   return function(dispatch) {
   console.log("Owner cre",values);
   
-  axios.post('http://localhost:3001/ownerlogin',values,{withCredentials: true}).then(res=>{
+  axios.post(rootURL+'/ownerlogin',values,{withCredentials: true}).then(res=>{
     
     if(res.data.token){
       console.log("token recieved by owner",res.data.token);

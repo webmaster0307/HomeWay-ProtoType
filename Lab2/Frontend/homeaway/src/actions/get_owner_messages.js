@@ -1,6 +1,8 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
+
 export const GET_ONWER_MESSAGES = "get_owner_messages";
 export const GET_ONWER_MESSAGES_ERROR = "get_owner_messages_error";
 
@@ -25,7 +27,7 @@ function get_owner_messages(data){
   return function(dispatch) {
   
   
-    axios.get('http://localhost:3001/getownermessages',{params:{owner:data
+    axios.get(rootURL+'/getownermessages',{params:{owner:data
 }}).then(res=>{
         console.log("Get t Action",res);
         

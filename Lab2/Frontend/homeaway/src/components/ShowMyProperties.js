@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+import rootURL from '../config.js';
 
 
 
@@ -32,7 +33,7 @@ constructor(props){
       <div className="row ">
         <div className="col-md-4">
           
-            <img src={`http://localhost:3001/${this.props.data.imageName}`} className="w-100"/>
+            <img src={`${rootURL}/${this.props.data.imageName}`} className="w-100"/>
 
           </div>
           <div className="col-md-8 px-3">

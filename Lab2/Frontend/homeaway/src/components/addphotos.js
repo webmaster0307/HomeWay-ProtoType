@@ -49,7 +49,7 @@ class  AddPhotos extends Component{
       
   }
   this.props.set_property_photos(data);
-  this.props.set_step(4);
+  this.props.set_step(2);
 }
 
 componentWillMount(){

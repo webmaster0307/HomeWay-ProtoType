@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 export const GET_OWNER_PROPERTIES = "get_owner_properties";
 export const GET_OWNER_PROPERTIES_ERROR = "get_owner_properties_error";
 
@@ -26,7 +27,7 @@ console.log("action called");
   return function(dispatch) {
   
   
-    axios.get("http://localhost:3001/ownerproperties",{ params: {
+    axios.get(rootURL+"/ownerproperties",{ params: {
         username:emailaddress
         
       }}).then(res=>{

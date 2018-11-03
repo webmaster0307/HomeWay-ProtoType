@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 export const OWNER_SIGN_UP = "owner_signup";
 export const OWNER_SIGNUP_ERROR = "ownerSignUp_error";
 //traveler login action
@@ -25,7 +26,7 @@ function owner_sign_up(values){
   return function(dispatch) {
   console.log("Traveler data is",values);
   
-  axios.post('http://localhost:3001/ownersignup',values).then(res=>{dispatch(
+  axios.post(rootURL+'/ownersignup',values).then(res=>{dispatch(
     getSuccess(res)
   )}).catch(error=>{
       dispatch(getError(error))

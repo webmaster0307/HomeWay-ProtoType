@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 export const PROPERTY_LOCATION = "add_property_location";
 export const PROPERTY_DETAILS = "add_property_details";
 export const PROPERTY_PHOTOS= "add_property_photos";
@@ -66,7 +67,7 @@ export const post_property_to_db=(data)=>{
         // for(let pair of data.entries()) {
         //     console.log(pair[1]);
         // }
-        axios.post('http://localhost:3001/postproperty',data).then(res=>{
+        axios.post(rootURL+'/postproperty',data).then(res=>{
         console.log("Get t Action",res);
         
     dispatch(

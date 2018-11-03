@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Logo1 from '../../src/logo-bceheader.svg';
 import expedia from '../../src/birdhouse-bceheader.svg';
 import axios from 'axios';
+import rootURL from '../config.js';
+
 import cookie from 'react-cookies';
 
 
@@ -27,7 +29,7 @@ constructor(props){
           <div className="row ">
             <div className="col-md-3">
               
-                <img id="round-image" src={`http://localhost:3001/${this.props.data.profile_image}`} className="w-100"/>
+                <img id="round-image" src={`${rootURL}/${this.props.data.profile_image}`} className="w-100"/>
     
               </div>
               <div className="col-md-8 px-1">

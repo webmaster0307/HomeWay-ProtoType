@@ -1,6 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
 export const POST_QUESTION = "post_question";
 export const POST_QUESTION_ERROR = "post_question_error";
 
@@ -25,7 +26,7 @@ function post_question(data){
   return function(dispatch) {
   
   
-    axios.post('http://localhost:3001/postquestion',data).then(res=>{
+    axios.post(rootURL+'/postquestion',data).then(res=>{
         console.log("Get t Action",res);
         
     dispatch(

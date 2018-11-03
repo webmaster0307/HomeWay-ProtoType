@@ -1,7 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
-
+import rootURL from '../config.js';
 export const TRAVELER_PROFILE = "get_traveler_profile";
 export const TRAVELER_PROFILE_ERROR = "traveler_profile_error";
 
@@ -25,7 +25,7 @@ function get_traveler_profile(emailaddress){
   return function(dispatch) {
   
   
-    axios.get('http://localhost:3001/gettravelerprofile',{ params: {
+    axios.get(rootURL+'/gettravelerprofile',{ params: {
         emailaddress:emailaddress
   
     }}).then(res=>{

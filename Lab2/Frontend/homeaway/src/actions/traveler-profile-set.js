@@ -1,7 +1,7 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
-
+import rootURL from '../config.js';
 export const TRAVELER_PROFILE_SET = "set_traveler_profile";
 export const TRAVELER_PROFILE_SET_ERROR = "set_traveler_profile_error";
 
@@ -29,7 +29,7 @@ function set_traveler_profile(formdata){
   return function(dispatch) {
   
   
-    axios.post('http://localhost:3001/addprofile',formdata).then(res=>{
+    axios.post(rootURL+'/addprofile',formdata).then(res=>{
         console.log("Set t Action",res);
         
     dispatch(

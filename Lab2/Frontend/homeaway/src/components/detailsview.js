@@ -14,6 +14,7 @@ import fetch_detailsview from '../actions/fetchdetailsview.js';
 import PostQestion from './postquestion.js'
 import book_property from '../actions/bookproperty.js';
 import post_question from '../actions/postquestion.js';
+import rootURL from '../config.js';
 
 import { connect } from "react-redux";
 import cookie from 'react-cookies';
@@ -272,7 +273,7 @@ this.props.fetch_detailsview(this.state.property_id);
             
                 return(
                     <div className={key == 0 ? 'carousel-item active' : 'carousel-item'}>
-                      <img src={`http://localhost:3001/${property}`} className="d-block w-100 " alt="First slide" />
+                      <img src={`${rootURL}/${property}`} className="d-block w-100 " alt="First slide" />
                     </div>
                 )
              

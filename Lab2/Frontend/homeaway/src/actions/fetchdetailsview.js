@@ -1,6 +1,8 @@
 import axios from 'axios';
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken';
+import rootURL from '../config.js';
+
 export const FETCH_DETAILS_VIEW = "fetch_detailsview";
 export const FETCH_DETAILS_VIEW_ERROR = "fetch_detailsview_error";
 
@@ -25,7 +27,7 @@ function fetch_detailsview(id){
   return function(dispatch) {
   
   
-    axios.get('http://localhost:3001/getlisting',{params:{property_id:id
+    axios.get(rootURL+'/getlisting',{params:{property_id:id
      }}).then(res=>{
         console.log("Get t Action",res);
         

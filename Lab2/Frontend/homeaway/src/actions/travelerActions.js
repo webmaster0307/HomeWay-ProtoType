@@ -1,7 +1,7 @@
 import axios from 'axios';
 import cookie from 'react-cookies'
 import  setAuthorizationToken from '../utils/setAuthorizationToken'
-
+import rootURL from '../config.js';
 export const TRAVELER_LOGIN = "traveler_login";
 export const TRAVELER_ERROR = "traveler_error";
 //traveler login action
@@ -26,7 +26,7 @@ function traveler_login(values,callback){
   return function(dispatch) {
   console.log("Traveler cre",values);
   
-  axios.post('http://localhost:3001/travelerlogin',values,{withCredentials: true}).then(res=>{
+  axios.post(rootURL+'/travelerlogin',values,{withCredentials: true}).then(res=>{
   
     if(res.data.token){
     const token = res.data.token ; 
