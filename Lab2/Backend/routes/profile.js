@@ -137,7 +137,7 @@ router.get('/gettravelerprofile',requireAuth,function (req, res) {
             console.log("Inside else");
             console.log("Results",results);
             if(results.image_find!=""){
-            var image=new Buffer(fs.readFileSync(path.join('/Users/shubhamsand/Documents/CMPE273-58/Lab2/Backend'+ '/uploads',results.image_find))).toString('base64');
+            var image=new Buffer(fs.readFileSync(path.join(__dirname,'..','uploads',results.image_find))).toString('base64');
             results.photo=image;
             }
             res.writeHead(200, {
