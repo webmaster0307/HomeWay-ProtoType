@@ -42,10 +42,10 @@ this.state={
             
   return (
       <div>
-      <h1>sdsfd</h1>
+      
       
       <div>
-<nav style={{color:"red"}}> 
+<nav> 
 <ul className="pagination">
 {pages.map(page => (
 <li className={page === currentPage ? "page-item active" : "page-item "} key= {page}>

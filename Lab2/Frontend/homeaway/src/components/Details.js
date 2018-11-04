@@ -206,7 +206,8 @@ componentDidUpdate(prevProps, prevState, snapshot){
 //   }
 
   render(){
-    const prope = paginate(this.props.properties, this.state.currentPage, 5)
+    let len=this.props.properties?this.props.properties.length:0;
+    const finalProperties = paginate(this.props.properties, this.state.currentPage, 3)
     console.log("Properties",this.props.properties);
     // let pagin=this.props.properties
 
@@ -226,7 +227,7 @@ guests:this.state.guests
 
       }
 console.log("startfil",this.state.filterstart);
-      let filteredProperties=this.props.properties?this.props.properties.filter((property)=>{
+      let filteredProperties=finalProperties?finalProperties.filter((property)=>{
           console.log(new Date(property.start));
           return (Number(property.rate)<=Number(this.state.filterprice) && property.address.toLowerCase().indexOf(this.state.filterloc.toLowerCase())!=-1 && Number(property.bedrooms)>=Number(this.state.filterbed))}):[];
         
@@ -252,6 +253,13 @@ console.log("startfil",this.state.filterstart);
 </div>
 </div>
       {this.state.message}
+      <div style={{paddingLeft:"70%"}}>
+      <Pagination1
+pageSize={3}
+itemsCount = {len}
+currentPage = {this.state.currentPage}
+onPageChange = {this.handlePageChange}/>
+      </div>
      
       <div style={{paddingTop:"4%"}}>{details}</div>
       <h3>{dataavailable}</h3>

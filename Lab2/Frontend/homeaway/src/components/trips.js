@@ -10,6 +10,8 @@ import fetch_mytrips from '../actions/mytrips.js';
 import cookie from 'react-cookies';
 import ShowTrips from './ShowTrips';
 import jwt from 'jsonwebtoken';
+import {paginate} from '../paginate'
+import Pagination1 from './paji.js'
 
 
 
@@ -19,10 +21,15 @@ class Trips extends Component {
         this.state={
             properties:null,
             status:null,
-            dataavailable:null
+            dataavailable:null,
+            currentPage:1
         }
 
     }
+
+    handlePageChange= page =>{
+        this.setState({currentPage : page });
+        }
 componentWillReceiveProps(nextProps){
     this.setState({
         properties:nextProps.properties,
@@ -57,11 +64,13 @@ componentWillMount(){
     render() {
         //console.log("trips", this.state.properties);
        // console.log(this.state.dataavailable);
+       let len=this.state.properties?this.state.properties.length:0;
+       const finalproperties= paginate(this.state.properties, this.state.currentPage, 3)
 
         let details = null;
         
         if (this.state.status === 200 && this.state.properties !== null) {
-            details = this.state.properties.map(property => {
+            details = finalproperties.map(property => {
                 return (
                     <ShowTrips key={Math.random()} data={property}/>
                 )
@@ -72,7 +81,13 @@ componentWillMount(){
 
 
             <div className="trips">
-            
+            <div style={{paddingLeft:"70%",paddingTop:"2%"}}>
+            <Pagination1
+pageSize={3}
+itemsCount = {len}
+currentPage = {this.state.currentPage}
+onPageChange = {this.handlePageChange}/>
+            </div>
 
             <div>
             

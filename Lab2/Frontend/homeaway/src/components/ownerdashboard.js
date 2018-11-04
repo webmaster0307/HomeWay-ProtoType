@@ -10,6 +10,8 @@ import { connect } from "react-redux";
 import get_owner_properties  from '../actions/ownerdashboard.js';
 import ShowMyProperties from './ShowMyProperties';
 import jwt from "jsonwebtoken";
+import {paginate} from '../paginate'
+import Pagination1 from './paji.js'
 
 class OwnerDashboard extends Component {
     constructor() {
@@ -17,10 +19,15 @@ class OwnerDashboard extends Component {
         this.state={
             properties:null,
             status:null,
-            dataavailable:null
+            dataavailable:null,
+            currentPage:1
         }
 
     }
+
+    handlePageChange= page =>{
+        this.setState({currentPage : page });
+        }
 
 componentDidMount(){
     console.log("called");
@@ -48,12 +55,12 @@ componentDidMount(){
     render() {
         //console.log("trips", this.state.properties);
         //console.log(this.state.dataavailable);
-
-
+        let len=this.props.properties?this.props.properties.length:0;
+        const finalproperties= paginate(this.props.properties, this.state.currentPage, 3)
         let details = null;
         
         if (this.props.status === 200 && this.props.properties !== null) {
-            details = this.props.properties.map(property => {
+            details = finalproperties.map(property => {
                 return (
                     <ShowMyProperties key={Math.random} data={property}/>
                 )
@@ -64,7 +71,13 @@ componentDidMount(){
 
 
             <div className="trips">
-            
+            <div style={{paddingLeft:"71%",paddingTop:"2%"}}>
+            <Pagination1
+pageSize={3}
+itemsCount = {len}
+currentPage = {this.state.currentPage}
+onPageChange = {this.handlePageChange}/>
+</div>
 
             <div>
             
