@@ -24,7 +24,7 @@ var kafka = require('../kafka/client');
 
 const router=express.Router();
 
-router.get('/ownerproperties',requireAuth,function(req,res){
+router.get('/ownerproperties',function(req,res){
     console.log("in fetch owner properties");
     var owner=req.query.username;
 

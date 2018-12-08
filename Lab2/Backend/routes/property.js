@@ -136,7 +136,7 @@ kafka.make_request('details_view',obj, function(err,results){
 
 
 
-router.post('/bookproperty', requireAuth,function (req, res) {
+router.post('/bookproperty',function (req, res) {
     console.log("Inside Booking Request Handler");
     var emailaddress = req.body.username;
     console.log(req.body.property_id);
