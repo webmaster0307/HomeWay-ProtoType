@@ -5,6 +5,11 @@ import expedia from '../../src/birdhouse-bceheader.svg';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import Traveler from './traveler';
+import { graphql, compose, withApollo } from 'react-apollo';
+import { Query } from "react-apollo";
+import { addBookMutation ,travelerSignUp} from '../mutation/mutations';
+import { getAuthorsQuery, getBooksQuery , propertyTravelers } from '../queries/queries';
+
 
 
 class ShowTravelers extends Component {
@@ -19,23 +24,41 @@ this.state={
 }
 
 componentDidMount(){
-    axios.get("http://localhost:3001/getpropertytravelers",{ params: {
-        property_id:this.props.match.params.property_id
+    // axios.get("http://localhost:3001/getpropertytravelers",{ params: {
+    //     property_id:this.props.match.params.property_id
 
-    }}).then(res=>{
-        let temp=JSON.stringify(res.data);
-        temp=JSON.parse(temp);
-        console.log("sds",temp);
-        if(temp=="Invalid property"){
-            this.setState({
-                message:"No Bookings for this property."
-            })
-        }else{
+    // }}).then(res=>{
+    //     let temp=JSON.stringify(res.data);
+    //     temp=JSON.parse(temp);
+    //     console.log("sds",temp);
+    //     if(temp=="Invalid property"){
+    //         this.setState({
+    //             message:"No Bookings for this property."
+    //         })
+    //     }else{
+    //     this.setState({
+    //         travelers:temp,
+    //         status:res.status
+    //     })
+    // }}).catch()
+
+    this.props.client.query({
+        query:propertyTravelers,
+        variables:{
+            property_id:this.props.match.params.property_id
+        }
+    }).then(res=>{
+        console.log("Property travelers",res);
         this.setState({
-            travelers:temp,
-            status:res.status
+            travelers:res.data.propertytraveler,
+            status:200
         })
-    }}).catch()
+    }).catch(e=>{
+        console.log("error",e);
+        this.setState({
+            status:400
+        })
+    })
 }
 
   render() {
@@ -111,4 +134,4 @@ componentDidMount(){
   }
 }
 
-export default ShowTravelers;
+export default withApollo(ShowTravelers);

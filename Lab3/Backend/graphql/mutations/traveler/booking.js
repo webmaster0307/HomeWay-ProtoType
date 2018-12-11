@@ -22,8 +22,10 @@ module.exports={
 		}
 	},
 	resolve(root, params) {
-        console.log("Params",params);
-        params.data.owner="ug@gmail.com"
+        console.log("Params recieved",params);
+		params.data.owner="ug@gmail.com"
+		
+		console.log("In book property");
 		const uModel = new booking(params.data);
 		const bk = uModel.save();
         if (!bk) {

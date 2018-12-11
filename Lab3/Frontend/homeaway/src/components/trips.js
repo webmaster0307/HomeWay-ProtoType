@@ -7,7 +7,10 @@ import expedia from '../../src/birdhouse-bceheader.svg';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import ShowTrips from './ShowTrips';
-
+import { graphql, compose, withApollo } from 'react-apollo';
+import { Query } from "react-apollo";
+import { addBookMutation ,travelerSignUp} from '../mutation/mutations';
+import { getAuthorsQuery, getBooksQuery , propertyTravelers} from '../queries/queries';
 
 
 
@@ -40,6 +43,27 @@ componentDidMount(){
         })
     }).catch()
     }
+
+    // if(cookie.load('traveler')){
+
+    //     this.props.client.query({
+    //         query:propertyTravelers,
+    //         variables:{
+    //             property_id:cookie.load('owner')
+    //         }
+    //     }).then(res=>{
+    //         console.log("owner Properties",res);
+    //         this.setState({
+    //             properties:res.data.ownerproperties,
+    //             status:200
+    //         })
+    //     }).catch(e=>{
+    //         console.log("error",e);
+    //         this.setState({
+    //             status:400
+    //         })
+    //     })
+    // }
 }
 
     render() {
@@ -85,4 +109,4 @@ componentDidMount(){
         )
     }
 }
-export default Trips;
+export default withApollo(Trips);

@@ -60,9 +60,25 @@ class Login extends Component {
 
     onSubmit(values) {
         console.log(values);
-        this.props.traveler_login(values,
-        )
+        // this.props.traveler_login(values,
+        // )
         
+        var properties=this.props.login({
+            variables: {
+                emailaddress:this.state.emailaddress,
+                password:this.state.password
+             
+            }
+            
+            //refetchQueries: [{ query: getBooksQuery }]
+          }).then(res=>{
+            console.log("properties",res);
+            let temp = JSON.stringify(res.data.login);
+           temp = JSON.parse(temp);
+            this.setState({
+                user:temp
+            })
+          });
       }
 
     render() {

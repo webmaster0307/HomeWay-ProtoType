@@ -66,7 +66,7 @@ const propertySearchType = new GraphQLObjectType({
         _id: {
 			type: GraphQLString
 		},
-        _id:{
+        address:{
             type:GraphQLString
         },
         headline:{

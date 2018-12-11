@@ -51,7 +51,14 @@ mutation propertySearch($address:String){
 `;
 
 
-
+const travelerLogin = gql`
+    mutation login($emailaddress: String, $password: String){
+        login(data:{ emailaddress: $emailaddress,password: $password}){
+            
+            emailaddress
+        }
+    }
+`;
 // const bookproperty = gql`
 // mutation booking($property_id:String,$start:String,$end:String,$guests:String,$traveler:String){
 //     booking(data:{property_id:$property_id,start:$start,end:$end,guests:$guests,traveler:$traveler}){
@@ -73,4 +80,4 @@ const book = gql`
 `;
 
 
-export {addBookMutation,travelerSignUp, updateTravelerProfile,fetchproperties , book};
+export {addBookMutation,travelerSignUp, updateTravelerProfile,fetchproperties , book, travelerLogin};

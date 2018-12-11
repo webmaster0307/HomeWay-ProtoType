@@ -25,6 +25,7 @@ module.exports= {
 		params.data.UserType='traveler'
 		const uModel = new traveler(params.data);
 		const newUser = uModel.save();
+		console.log("Duplicate Traveler");
 		if (!newUser) {
 			throw new Error('Error adding user');
 		}

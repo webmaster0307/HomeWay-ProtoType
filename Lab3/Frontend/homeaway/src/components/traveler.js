@@ -33,7 +33,7 @@ constructor(props){
               <div className="col-md-8 px-1">
                 <div id="cb" className="card-block px-3">
                   <div >
-                  <p id="traveler-details" className="card-text">{this.props.data.firstname}&nbsp;&nbsp; {this.props.data.lastname}</p>
+                  <p id="traveler-details" className="card-text">{this.props.data.firstName}&nbsp;&nbsp; {this.props.data.lastName}</p>
                   <p id="traveler-desc">{this.props.data.citycountry} &nbsp;{this.props.data.company}</p>
                   <p id="traveler-desc">{this.props.data.aboutme}</p>
 

@@ -38,4 +38,14 @@ query ownerproperties($username: String){
 
 `;
 
-export { getAuthorsQuery, getBooksQuery ,ownerProperties};
+const propertyTravelers = gql`
+query propertytraveler($property_id: String){
+    propertytraveler(property_id:$property_id){
+        firstName,
+        lastName,
+    }
+  }
+
+`;
+
+export { getAuthorsQuery, getBooksQuery ,ownerProperties , propertyTravelers};
